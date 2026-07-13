@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2048 — Полная версия</title>
+    <style>
+        /* ---------- Переменные (светлая тема) ---------- */
+        :root {
+            --bg: #faf8ef;
+            --text: #776e65;
+            --header-text: #776e65;
+            --grid-bg: #bbada0;
+            --cell-bg: #cdc1b4;
+            --score-bg: #bbada0;
+            --score-text: #fff;
+            --btn-bg: #8f7a66;
+            --btn-hover: #9f8b76;
+            --gameover-color: #ff6b6b;
+            --modal-bg: rgba(0,0,0,0.5);
+            --modal-content: #fff;
+            --modal-text: #333;
+        }
+
+        /* ---------- Тёмная тема ---------- */
+        body.dark {
+            --bg: #1a1a2e;
+            --text: #e0e0e0;
+            --header-text: #e0e0e0;
+            --grid-bg: #16213e;
+            --cell-bg: #2a3a5e;
+            --score-bg: #0f3460;
+            --score-text: #e0e0e0;
+            --btn-bg: #0f3460;
+            --btn-hover: #1a4a7a;
+            --gameover-color: #ff6b6b;
+            --modal-bg: rgba(0,0,0,0.7);
+            --modal-content: #1a1a2e;
+            --modal-text: #e0e0e0;
+        }
+
+        /* ---------- Общие ---------- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+            color: var(--text);
+        }
+        .container {
+            text-align: center;
+            max-width: 520px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        /* ---------- Шапка ---------- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .title-block {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        h1 {
+            font-size: 40px;
+            color: var(--header-text);
+            margin: 0;
+            transition: color 0.3s;
+        }
+        .theme-toggle {
+            background: var(--btn-bg);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.2s;
+            line-height: 1;
+        }
+        .theme-toggle:hover { background: var(--btn-hover); }
+
+        .scores {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .score-container {
+            background: var(--score-bg);
+            color: var(--score-text);
+            padding: 4px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: background 0.3s, color 0.3s;
+            min-width: 65px;
+        }
+        .score-container span {
+            font-weight: bold;
+            font-size: 20px;
+            display: block;
+        }
+
+        /* ---------- Поле ---------- */
+        .grid-wrapper {
+            position: relative;
+            background: var(--grid-bg);
+            border-radius: 8px;
+            padding: 12px;
+            aspect-ratio: 1 / 1;
+            transition: background 0.3s;
+            touch-action: none;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .cell-bg {
+            background: var(--cell-bg);
+            border-radius: 6px;
+            aspect-ratio: 1 / 1;
+            transition: background 0.3s;
+        }
+
+        /* ---------- Плитки ---------- */
+        .tile {
+            position: absolute;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #776e65;
+            font-size: 32px;
+            transition: top 0.12s ease, left 0.12s ease;
+            z-index: 10;
+            will-change: top, left;
+        }
+        /* Анимация появления с вылетом снизу */
+        .tile.pop {
+            animation: flyUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes flyUp {
+            0% { transform: translateY(30px) scale(0.5); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        /* Анимация слияния */
+        .tile.merge {
+            animation: mergePop 0.2s ease;
+        }
+        @keyframes mergePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+
+        /* Цвета плиток */
+        .tile[data-value="2"] { background: #eee4da; }
+        .tile[data-value="4"] { background: #ede0c8; }
+        .tile[data-value="8"] { background: #f2b179; color: white; }
+        .tile[data-value="16"] { background: #f59563; color: white; }
+        .tile[data-value="32"] { background: #f67c5f; color: white; }
+        .tile[data-value="64"] { background: #f65e3b; color: white; }
+        .tile[data-value="128"] { background: #edcf72; color: white; font-size: 28px; }
+        .tile[data-value="256"] { background: #edcc61; color: white; font-size: 28px; }
+        .tile[data-value="512"] { background: #edc850; color: white; font-size: 28px; }
+        .tile[data-value="1024"] { background: #edc53f; color: white; font-size: 22px; }
+        .tile[data-value="2048"] { background: #edc22e; color: white; font-size: 22px; }
+
+        /* ---------- Кнопки ---------- */
+        .controls-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 10px 24px;
+            font-size: 16px;
+            background: var(--btn-bg);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn:hover { background: var(--btn-hover); }
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-leader {
+            background: #6c5b7b;
+        }
+        .btn-leader:hover { background: #7d6b8d; }
+
+        .game-over {
+            margin-top: 16px;
+            font-size: 26px;
+            color: var(--gameover-color);
+            font-weight: bold;
+            display: none;
+            transition: color 0.3s;
+        }
+        .controls-hint {
+            margin-top: 8px;
+            font-size: 13px;
+            opacity: 0.6;
+        }
+
+        /* ---------- Модальное окно лидеров ---------- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--modal-bg);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal-box {
+            background: var(--modal-content);
+            color: var(--modal-text);
+            padding: 30px 40px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transition: background 0.3s, color 0.3s;
+        }
+        .modal-box h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .leader-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            font-size: 18px;
+        }
+        .leader-item .pos { font-weight: bold; width: 30px; }
+        .leader-item .name { flex: 1; text-align: left; margin-left: 10px; }
+        .leader-item .lscore { font-weight: bold; }
+        .leader-empty {
+            text-align: center;
+            opacity: 0.5;
+            padding: 20px 0;
+        }
+        .modal-close {
+            display: block;
+            margin: 20px auto 0;
+            padding: 8px 30px;
+            font-size: 16px;
+            background: var(--btn-bg);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .modal-close:hover { background: var(--btn-hover); }
+
+        /* ---------- Адаптив ---------- */
+        @media (max-width: 500px) {
+            .grid-wrapper { padding: 8px; }
+            .grid { gap: 8px; }
+            .tile { font-size: 24px; }
+            h1 { font-size: 30px; }
+            .score-container span { font-size: 16px; }
+            .btn { padding: 8px 16px; font-size: 14px; }
+            .modal-box { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Шапка -->
+        <div class="header">
+            <div class="title-block">
+                <h1>2048</h1>
+                <button class="theme-toggle" id="themeToggle">🌙</button>
+            </div>
+            <div class="scores">
+                <div class="score-container">
+                    Счёт
+                    <span id="score">0</span>
+                </div>
+                <div class="score-container">
+                    Лучший
+                    <span id="bestScore">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Поле -->
+        <div class="grid-wrapper" id="gridWrapper">
+            <div class="grid" id="grid"></div>
+        </div>
+
+        <!-- Кнопки -->
+        <div class="controls-row">
+            <button class="btn" id="undoBtn" disabled>↩ Назад</button>
+            <button class="btn" id="resetBtn">🔄 Новая игра</button>
+            <button class="btn btn-leader" id="leaderBtn">🏆 Лидеры</button>
+        </div>
+
+        <div class="game-over" id="gameOver">💥 Игра окончена!</div>
+        <div class="controls-hint">Стрелки ← ↑ → ↓ · Свайпы на телефоне</div>
+    </div>
+
+    <!-- Модалка лидеров -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <h2>🏆 Таблица лидеров</h2>
+            <div id="leaderList"></div>
+            <button class="modal-close" id="modalClose">Закрыть</button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- Константы ----------
+            const SIZE = 4;
+            const BEST_KEY = 'game2048_best';
+            const THEME_KEY = 'game2048_theme';
+            const LEADER_KEY = 'game2048_leaders';
+            const HISTORY_KEY = 'game2048_history';
+            const MAX_HISTORY = 20;
+
+            // ---------- Состояние ----------
+            let grid = [];
+            let score = 0;
+            let bestScore = parseInt(localStorage.getItem(BEST_KEY)) || 0;
+            let gameOver = false;
+            let isMoving = false;
+            let history = []; // массив состояний { grid: [...], score: number }
+            let currentHistoryIndex = -1;
+
+            // ---------- DOM ----------
+            const gridEl = document.getElementById('grid');
+            const gridWrapper = document.getElementById('gridWrapper');
+            const scoreEl = document.getElementById('score');
+            const bestScoreEl = document.getElementById('bestScore');
+            const gameOverEl = document.getElementById('gameOver');
+            const themeToggle = document.getElementById('themeToggle');
+            const undoBtn = document.getElementById('undoBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const leaderBtn = document.getElementById('leaderBtn');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalClose = document.getElementById('modalClose');
+            const leaderList = document.getElementById('leaderList');
+
+            // ---------- Звуки (Web Audio API) ----------
+            let audioCtx = null;
+
+            function initAudio() {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            function playTone(freq, duration, type = 'sine', volume = 0.3) {
+                try {
+                    initAudio();
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = type;
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + duration);
+                } catch (e) {
+                    // если звук не работает — просто игнорируем
+                }
+            }
+
+            function playMergeSound() {
+                // весёлый "динь" — восходящий тон
+                playTone(523, 0.12, 'sine', 0.25);
+                setTimeout(() => playTone(659, 0.1, 'sine', 0.2), 80);
+            }
+
+            function playGameOverSound() {
+                // печальный "бам" — нисходящий
+                playTone(440, 0.3, 'sawtooth', 0.15);
+                setTimeout(() => playTone(349, 0.4, 'sawtooth', 0.12), 200);
+            }
+
+            // ---------- Работа с темой ----------
+            function applyTheme(theme) {
+                if (theme === 'dark') {
+                    document.body.classList.add('dark');
+                    themeToggle.textContent = '☀️';
+                } else {
+                    document.body.classList.remove('dark');
+                    themeToggle.textContent = '🌙';
+                }
+                localStorage.setItem(THEME_KEY, theme);
+            }
+
+            const savedTheme = localStorage.getItem(THEME_KEY);
+            applyTheme(savedTheme === 'dark' ? 'dark' : 'light');
+            themeToggle.addEventListener('click', () => {
+                const isDark = document.body.classList.contains('dark');
+                applyTheme(isDark ? 'light' : 'dark');
+            });
+
+            // ---------- Лидеры ----------
+            function getLeaders() {
+                try {
+                    return JSON.parse(localStorage.getItem(LEADER_KEY)) || [];
+                } catch { return []; }
+            }
+
+            function saveLeaders(leaders) {
+                localStorage.setItem(LEADER_KEY, JSON.stringify(leaders));
+            }
+
+            function addLeader(score) {
+                if (score === 0) return;
+                let leaders = getLeaders();
+                // Имя — можно спросить у пользователя
+                let name = prompt('🎉 Новый рекорд! Введите ваше имя:', 'Игрок');
+                if (!name || name.trim() === '') name = 'Игрок';
+                name = name.trim().substring(0, 20);
+
+                leaders.push({ name, score });
+                leaders.sort((a, b) => b.score - a.score);
+                if (leaders.length > 5) leaders = leaders.slice(0, 5);
+                saveLeaders(leaders);
+                renderLeaders();
+            }
+
+            function renderLeaders() {
+                const leaders = getLeaders();
+                if (leaders.length === 0) {
+                    leaderList.innerHTML = '<div class="leader-empty">Пока нет рекордов 😢<br>Станьте первым!</div>';
+                    return;
+                }
+                let html = '';
+                leaders.forEach((item, i) => {
+                    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}.`;
+                    html += `
+                        <div class="leader-item">
+                            <span class="pos">${medal}</span>
+                            <span class="name">${item.name}</span>
+                            <span class="lscore">${item.score}</span>
+                        </div>
+                    `;
+                });
+                leaderList.innerHTML = html;
+            }
+
+            // ---------- Модалка ----------
+            function showModal() {
+                renderLeaders();
+                modalOverlay.classList.add('active');
+            }
+            function hideModal() {
+                modalOverlay.classList.remove('active');
+            }
+            leaderBtn.addEventListener('click', showModal);
+            modalClose.addEventListener('click', hideModal);
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) hideModal();
+            });
+
+            // ---------- Работа с историей ----------
+            function pushHistory() {
+                const state = {
+                    grid: grid.map(row => [...row]),
+                    score: score
+                };
+                // Обрезаем историю, если мы не в конце
+                if (currentHistoryIndex < history.length - 1) {
+                    history = history.slice(0, currentHistoryIndex + 1);
+                }
+                history.push(state);
+                if (history.length > MAX_HISTORY) {
+                    history.shift();
+                }
+                currentHistoryIndex = history.length - 1;
+                updateUndoButton();
+            }
+
+            function undo() {
+                if (currentHistoryIndex <= 0 || isMoving) return;
+                currentHistoryIndex--;
+                const state = history[currentHistoryIndex];
+                if (!state) return;
+                grid = state.grid.map(row => [...row]);
+                score = state.score;
+                gameOver = false;
+                gameOverEl.style.display = 'none';
+                renderTiles(false);
+                updateScore();
+                updateUndoButton();
+            }
+
+            function updateUndoButton() {
+                undoBtn.disabled = currentHistoryIndex <= 0 || isMoving;
+            }
+
+            // ---------- Вычисление размера плитки ----------
+            function getTileSize() {
+                const rect = gridWrapper.getBoundingClientRect();
+                const padding = window.innerWidth <= 500 ? 8 : 12;
+                const gap = window.innerWidth <= 500 ? 8 : 12;
+                const totalGap = gap * (SIZE - 1);
+                const avail = rect.width - padding * 2;
+                return (avail - totalGap) / SIZE;
+            }
+
+            // ---------- Рендер плиток ----------
+            function renderTiles(animate = false) {
+                document.querySelectorAll('.tile').forEach(el => el.remove());
+
+                const padding = window.innerWidth <= 500 ? 8 : 12;
+                const gap = window.innerWidth <= 500 ? 8 : 12;
+                const tileSize = getTileSize();
+
+                for (let r = 0; r < SIZE; r++) {
+                    for (let c = 0; c < SIZE; c++) {
+                        const val = grid[r][c];
+                        if (val === 0) continue;
+
+                        const tile = document.createElement('div');
+                        tile.className = 'tile';
+                        if (animate) tile.classList.add('pop');
+                        tile.setAttribute('data-value', val);
+                        tile.textContent = val;
+
+                        const left = padding + c * (tileSize + gap);
+                        const top = padding + r * (tileSize + gap);
+                        tile.style.width = tileSize + 'px';
+                        tile.style.height = tileSize + 'px';
+                        tile.style.left = left + 'px';
+                        tile.style.top = top + 'px';
+                        tile.style.fontSize = (val >= 1024) ? (tileSize * 0.42) : (tileSize * 0.52);
+
+                        gridWrapper.appendChild(tile);
+                    }
+                }
+            }
+
+            // ---------- Фоновые ячейки ----------
+            function renderBackground() {
+                gridEl.innerHTML = '';
+                for (let i = 0; i < SIZE * SIZE; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell-bg';
+                    gridEl.appendChild(cell);
+                }
+            }
+
+            // ---------- Счёт ----------
+            function updateScore() {
+                scoreEl.textContent = score;
+                if (score > bestScore) {
+                    bestScore = score;
+                    localStorage.setItem(BEST_KEY, bestScore);
+                }
+                bestScoreEl.textContent = bestScore;
+            }
+
+            // ---------- Инициализация ----------
+            function initGrid() {
+                grid = [];
+                for (let r = 0; r < SIZE; r++) {
+                    grid[r] = [];
+                    for (let c = 0; c < SIZE; c++) {
+                        grid[r][c] = 0;
+                    }
+                }
+                score = 0;
+                gameOver = false;
+                gameOverEl.style.display = 'none';
+                history = [];
+                currentHistoryIndex = -1;
+                spawnTile();
+                spawnTile();
+                pushHistory();
+                renderBackground();
+                renderTiles(true);
+                updateScore();
+                updateUndoButton();
+            }
+
+            // ---------- Создание плитки ----------
+            function spawnTile() {
+                const empty = [];
+                for (let r = 0; r < SIZE; r++) {
+                    for (let c = 0; c < SIZE; c++) {
+                        if (grid[r][c] === 0) empty.push({ r, c });
+                    }
+                }
+                if (empty.length === 0) return false;
+                const { r, c } = empty[Math.floor(Math.random() * empty.length)];
+                grid[r][c] = Math.random() < 0.9 ? 2 : 4;
+                return true;
+            }
+
+            // ---------- Логика движения ----------
+            function slideRow(row) {
+                let filtered = row.filter(v => v !== 0);
+                let newRow = [];
+                let i = 0;
+                let addedScore = 0;
+                let merged = false;
+                while (i < filtered.length) {
+                    if (i + 1 < filtered.length && filtered[i] === filtered[i + 1]) {
+                        const val = filtered[i] * 2;
+                        newRow.push(val);
+                        addedScore += val;
+                        merged = true;
+                        i += 2;
+                    } else {
+                        newRow.push(filtered[i]);
+                        i++;
+                    }
+                }
+                while (newRow.length < SIZE) newRow.push(0);
+                return { row: newRow, score: addedScore, merged };
+            }
+
+            function move(direction) {
+                if (gameOver || isMoving) return;
+                isMoving = true;
+
+                let moved = false;
+                let totalAdded = 0;
+                let anyMerged = false;
+                const oldGrid = grid.map(row => [...row]);
+
+                if (direction === 'left') {
+                    for (let r = 0; r < SIZE; r++) {
+                        const result = slideRow(grid[r]);
+                        grid[r] = result.row;
+                        totalAdded += result.score;
+                        if (result.merged) anyMerged = true;
+                    }
+                } else if (direction === 'right') {
+                    for (let r = 0; r < SIZE; r++) {
+                        const reversed = [...grid[r]].reverse();
+                        const result = slideRow(reversed);
+                        grid[r] = result.row.reverse();
+                        totalAdded += result.score;
+                        if (result.merged) anyMerged = true;
+                    }
+                } else if (direction === 'up') {
+                    for (let c = 0; c < SIZE; c++) {
+                        const col = [];
+                        for (let r = 0; r < SIZE; r++) col.push(grid[r][c]);
+                        const result = slideRow(col);
+                        for (let r = 0; r < SIZE; r++) grid[r][c] = result.row[r];
+                        totalAdded += result.score;
+                        if (result.merged) anyMerged = true;
+                    }
+                } else if (direction === 'down') {
+                    for (let c = 0; c < SIZE; c++) {
+                        const col = [];
+                        for (let r = SIZE - 1; r >= 0; r--) col.push(grid[r][c]);
+                        const result = slideRow(col);
+                        for (let r = SIZE - 1; r >= 0; r--) grid[r][c] = result.row[SIZE - 1 - r];
+                        totalAdded += result.score;
+                        if (result.merged) anyMerged = true;
+                    }
+                }
+
+                for (let r = 0; r < SIZE; r++) {
+                    for (let c = 0; c < SIZE; c++) {
+                        if (grid[r][c] !== oldGrid[r][c]) moved = true;
+                    }
+                }
+
+                if (moved) {
+                    score += totalAdded;
+                    if (anyMerged) playMergeSound();
+                    spawnTile();
+                    pushHistory();
+                    renderTiles(true);
+                    updateScore();
+                    if (isGameOver()) {
+                        gameOver = true;
+                        gameOverEl.style.display = 'block';
+                        playGameOverSound();
+                        // Проверяем рекорд для таблицы лидеров
+                        if (score > 0) {
+                            const leaders = getLeaders();
+                            // Добавляем, если это топ-5 или больше чем текущий пятый
+                            if (leaders.length < 5 || score > leaders[leaders.length - 1]?.score) {
+                                setTimeout(() => addLeader(score), 400);
+                            }
+                        }
+                    }
+                }
+
+                isMoving = false;
+                updateUndoButton();
+            }
+
+            // ---------- Проверка окончания ----------
+            function isGameOver() {
+                for (let r = 0; r < SIZE; r++) {
+                    for (let c = 0; c < SIZE; c++) {
+                        if (grid[r][c] === 0) return false;
+                    }
+                }
+                for (let r = 0; r < SIZE; r++) {
+                    for (let c = 0; c < SIZE; c++) {
+                        const v = grid[r][c];
+                        if (c < SIZE - 1 && grid[r][c + 1] === v) return false;
+                        if (r < SIZE - 1 && grid[r + 1][c] === v) return false;
+                    }
+                }
+                return true;
+            }
+
+            // ---------- Управление ----------
+            document.addEventListener('keydown', (e) => {
+                const map = {
+                    'ArrowLeft': 'left',
+                    'ArrowRight': 'right',
+                    'ArrowUp': 'up',
+                    'ArrowDown': 'down'
+                };
+                const dir = map[e.key];
+                if (dir) {
+                    e.preventDefault();
+                    move(dir);
+                }
+                if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    undo();
+                }
+            });
+
+            // ---------- Свайпы ----------
+            let touchStartX = 0, touchStartY = 0;
+            gridWrapper.addEventListener('touchstart', (e) => {
+                const t = e.touches[0];
+                touchStartX = t.clientX;
+                touchStartY = t.clientY;
+            });
+            gridWrapper.addEventListener('touchmove', (e) => e.preventDefault());
+            gridWrapper.addEventListener('touchend', (e) => {
+                if (touchStartX === 0 && touchStartY === 0) return;
+                const t = e.changedTouches[0];
+                const dx = t.clientX - touchStartX;
+                const dy = t.clientY - touchStartY;
+                const absDx = Math.abs(dx);
+                const absDy = Math.abs(dy);
+                if (Math.max(absDx, absDy) < 20) return;
+                if (absDx > absDy) {
+                    move(dx > 0 ? 'right' : 'left');
+                } else {
+                    move(dy > 0 ? 'down' : 'up');
+                }
+                touchStartX = 0;
+                touchStartY = 0;
+            });
+
+            // ---------- Кнопки ----------
+            resetBtn.addEventListener('click', () => {
+                if (confirm('Начать новую игру? Текущий прогресс будет потерян.')) {
+                    initGrid();
+                }
+            });
+
+            undoBtn.addEventListener('click', undo);
+
+            // ---------- Ресайз ----------
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => renderTiles(false), 100);
+            });
+
+            // ---------- Старт ----------
+            initGrid();
+
+            // Звук по первому клику (для активации AudioContext)
+            document.addEventListener('click', () => initAudio(), { once: true });
+            document.addEventListener('touchstart', () => initAudio(), { once: true });
+
+            // Горячие клавиши для лидеров (L)
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'l' || e.key === 'L') {
+                    if (!modalOverlay.classList.contains('active')) showModal();
+                    else hideModal();
+                }
+            });
+
+        })();
+    </script>
+</body>
+</html>
