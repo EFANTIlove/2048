@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>2048 — Полная версия</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>2048</title>
     <style>
         :root {
             --bg: #faf8ef;
@@ -49,17 +49,16 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
+        html, body {
+            height: 100%;
+            overflow: hidden;
             font-family: Arial, sans-serif;
             background: var(--bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            transition: background 0.5s, color 0.3s;
             color: var(--text);
-            position: relative;
-            overflow-x: hidden;
+            transition: background 0.5s, color 0.3s;
+            touch-action: none;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
 
         #particles-canvas {
@@ -68,98 +67,123 @@
             width: 100%; height: 100%;
             z-index: 0;
             pointer-events: none;
-            opacity: 0.5;
+            opacity: 0.4;
         }
-        body.dark #particles-canvas { opacity: 0.8; }
+        body.dark #particles-canvas { opacity: 0.7; }
 
         .container {
-            text-align: center;
-            max-width: 529px;
-            width: 100%;
-            padding: 15px;
-            position: relative;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 6px;
             z-index: 1;
+            max-width: 529px;
+            margin: 0 auto;
+            width: 100%;
         }
 
-        .page { display: none; animation: fadePage 0.3s ease; }
-        .page.active { display: block; }
+        .page {
+            display: none;
+            animation: fadePage 0.3s ease;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .page.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
         @keyframes fadePage {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* ===== МЕНЮ ===== */
         .menu-title {
-            font-size: 70.6px;
+            font-size: clamp(36px, 9vw, 70px);
             font-weight: bold;
             color: var(--header-text);
-            margin: 30px 0 5px;
             transition: color 0.3s;
             text-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
         .menu-subtitle {
-            font-size: 13.7px;
+            font-size: clamp(11px, 2.2vw, 14px);
             opacity: 0.6;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+            text-align: center;
         }
         .menu-buttons {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            max-width: 274px;
+            gap: 5px;
+            max-width: 240px;
+            width: 100%;
             margin: 0 auto;
         }
         .menu-btn {
-            padding: 11.8px;
-            font-size: 15.7px;
+            padding: 9px;
+            font-size: clamp(13px, 2.6vw, 16px);
             font-weight: bold;
             background: var(--btn-bg);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             transition: 0.2s;
+            width: 100%;
         }
-        .menu-btn:hover { background: var(--btn-hover); transform: scale(1.02); }
-        .menu-btn:active { transform: scale(0.98); }
+        .menu-btn:active { transform: scale(0.97); }
         .menu-btn-secondary { background: #6c5b7b; }
-        .menu-btn-secondary:hover { background: #7d6b8d; }
         .menu-btn-success { background: #27ae60; }
-        .menu-btn-success:hover { background: #2ecc71; }
-        .menu-btn-small { font-size: 13.7px; padding: 7.8px; background: #5a6b7c; }
-        .menu-btn-small:hover { background: #6a7b8c; }
+        .menu-btn-small { font-size: clamp(10px, 2vw, 13px); padding: 5px; background: #5a6b7c; }
         .menu-coins {
-            font-size: 15.7px;
-            margin-top: 15px;
+            font-size: clamp(12px, 2.2vw, 16px);
+            margin-top: 8px;
             opacity: 0.8;
+        }
+
+        /* ===== ИГРА ===== */
+        .game-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            padding: 0px 0;
         }
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 11.8px;
+            margin-bottom: 2px;
             flex-wrap: wrap;
-            gap: 5.9px;
+            gap: 3px;
+            flex-shrink: 0;
         }
         .title-block {
             display: flex;
             align-items: center;
-            gap: 5.9px;
+            gap: 3px;
         }
         .back-btn {
             background: var(--btn-bg);
             color: white;
             border: none;
-            border-radius: 6px;
-            padding: 4.9px 9.8px;
-            font-size: 15.7px;
+            border-radius: 5px;
+            padding: 2px 7px;
+            font-size: clamp(13px, 2.6vw, 17px);
             cursor: pointer;
-            transition: 0.2s;
             line-height: 1;
         }
-        .back-btn:hover { background: var(--btn-hover); }
+        .back-btn:active { transform: scale(0.95); }
         h1 {
-            font-size: 21.6px;
+            font-size: clamp(18px, 3.8vw, 24px);
             color: var(--header-text);
             margin: 0;
             transition: color 0.3s;
@@ -167,53 +191,93 @@
         .coins-display {
             background: var(--score-bg);
             color: var(--score-text);
-            padding: 2.9px 9.8px;
-            border-radius: 6px;
-            font-size: 11.8px;
+            padding: 1px 7px;
+            border-radius: 5px;
+            font-size: clamp(9px, 1.8vw, 12px);
             transition: background 0.3s;
         }
         .coins-display span {
             font-weight: bold;
-            font-size: 14.7px;
+            font-size: clamp(10px, 2.2vw, 14px);
             display: block;
+            text-align: center;
         }
+
+        .mode-selector {
+            display: flex;
+            gap: 3px;
+            justify-content: center;
+            margin-bottom: 2px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        .mode-btn {
+            padding: 2px 9px;
+            font-size: clamp(10px, 1.8vw, 13px);
+            background: var(--shop-item-bg);
+            border: 2px solid var(--shop-item-border);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--text);
+        }
+        .mode-btn.active {
+            border-color: #27ae60;
+            background: rgba(39,174,96,0.15);
+        }
+        .mode-btn:active { transform: scale(0.95); }
 
         .scores {
             display: flex;
-            gap: 5.9px;
+            gap: 4px;
             align-items: center;
             flex-wrap: wrap;
             justify-content: center;
-            margin-bottom: 5.9px;
+            margin-bottom: 2px;
+            flex-shrink: 0;
         }
         .score-container {
             background: var(--score-bg);
             color: var(--score-text);
-            padding: 2.9px 9.8px;
-            border-radius: 6px;
-            font-size: 10.8px;
+            padding: 1px 7px;
+            border-radius: 5px;
+            font-size: clamp(8px, 1.6vw, 11px);
             transition: background 0.3s, color 0.3s;
-            min-width: 49px;
+            min-width: 38px;
         }
         .score-container span {
             font-weight: bold;
-            font-size: 15.7px;
+            font-size: clamp(10px, 2.2vw, 15px);
             display: block;
+            text-align: center;
+        }
+
+        .timer-display {
+            font-size: clamp(18px, 3.8vw, 26px);
+            font-weight: bold;
+            color: var(--gameover-color);
+            margin: 1px 0;
+            display: none;
+            flex-shrink: 0;
         }
 
         .grid-wrapper {
             position: relative;
             background: var(--grid-bg);
-            border-radius: 7.8px;
-            padding: 7.8px;
+            border-radius: 6px;
+            padding: 6px;
             aspect-ratio: 1 / 1;
             transition: background 0.5s;
             touch-action: none;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            flex-shrink: 0;
+            width: 100%;
+            max-width: min(100%, 400px);
+            margin: 0 auto;
         }
         .grid {
             display: grid;
-            gap: 7.8px;
+            gap: 6px;
             width: 100%;
             height: 100%;
             position: relative;
@@ -223,34 +287,30 @@
 
         .cell-bg {
             background: var(--cell-bg);
-            border-radius: 5.9px;
+            border-radius: 5px;
             aspect-ratio: 1 / 1;
             transition: background 0.3s;
         }
 
         .tile {
             position: absolute;
-            border-radius: 5.9px;
+            border-radius: 5px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: bold;
             color: #776e65;
-            font-size: 25.5px;
-            transition: top 0.12s ease, left 0.12s ease, transform 0.12s ease;
+            font-size: clamp(16px, 4vw, 26px);
+            transition: top 0.08s ease, left 0.08s ease, transform 0.08s ease;
             z-index: 10;
             will-change: top, left, transform;
         }
-        .tile.pop {
-            animation: flyUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+        .tile.pop { animation: flyUp 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes flyUp {
-            0% { transform: translateY(30px) scale(0.5); opacity: 0; }
+            0% { transform: translateY(20px) scale(0.5); opacity: 0; }
             100% { transform: translateY(0) scale(1); opacity: 1; }
         }
-        .tile.merge {
-            animation: mergePop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+        .tile.merge { animation: mergePop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes mergePop {
             0% { transform: scale(1); }
             40% { transform: scale(1.35); }
@@ -263,13 +323,13 @@
         .tile[data-value="16"] { background: #f59563; color: white; }
         .tile[data-value="32"] { background: #f67c5f; color: white; }
         .tile[data-value="64"] { background: #f65e3b; color: white; }
-        .tile[data-value="128"] { background: #edcf72; color: white; font-size: 21.6px; }
-        .tile[data-value="256"] { background: #edcc61; color: white; font-size: 21.6px; }
-        .tile[data-value="512"] { background: #edc850; color: white; font-size: 21.6px; }
-        .tile[data-value="1024"] { background: #edc53f; color: white; font-size: 17.6px; }
-        .tile[data-value="2048"] { background: #edc22e; color: white; font-size: 17.6px; }
-        .tile[data-value="4096"] { background: #b884cb; color: white; font-size: 15.7px; }
-        .tile[data-value="8192"] { background: #a04eb3; color: white; font-size: 15.7px; }
+        .tile[data-value="128"] { background: #edcf72; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile[data-value="256"] { background: #edcc61; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile[data-value="512"] { background: #edc850; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile[data-value="1024"] { background: #edc53f; color: white; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile[data-value="2048"] { background: #edc22e; color: white; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile[data-value="4096"] { background: #b884cb; color: white; font-size: clamp(9px, 2.4vw, 16px); }
+        .tile[data-value="8192"] { background: #a04eb3; color: white; font-size: clamp(9px, 2.4vw, 16px); }
 
         .tile.green[data-value="2"] { background: #a8e6cf; color: #2d5a3a; }
         .tile.green[data-value="4"] { background: #7bcfb2; color: #1e3d2a; }
@@ -277,11 +337,11 @@
         .tile.green[data-value="16"] { background: #2e8b6c; color: white; }
         .tile.green[data-value="32"] { background: #1a6b52; color: white; }
         .tile.green[data-value="64"] { background: #0f4d3a; color: white; }
-        .tile.green[data-value="128"] { background: #0a3d2e; color: white; font-size: 21.6px; }
-        .tile.green[data-value="256"] { background: #063023; color: white; font-size: 21.6px; }
-        .tile.green[data-value="512"] { background: #042218; color: white; font-size: 21.6px; }
-        .tile.green[data-value="1024"] { background: #02150e; color: white; font-size: 17.6px; }
-        .tile.green[data-value="2048"] { background: #010d08; color: #ffd700; font-size: 17.6px; }
+        .tile.green[data-value="128"] { background: #0a3d2e; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.green[data-value="256"] { background: #063023; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.green[data-value="512"] { background: #042218; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.green[data-value="1024"] { background: #02150e; color: white; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile.green[data-value="2048"] { background: #010d08; color: #ffd700; font-size: clamp(11px, 2.6vw, 18px); }
 
         .tile.pink[data-value="2"] { background: #fce4ec; color: #6a2e4a; }
         .tile.pink[data-value="4"] { background: #f8bbd0; color: #5a1e3a; }
@@ -289,11 +349,11 @@
         .tile.pink[data-value="16"] { background: #ec407a; color: white; }
         .tile.pink[data-value="32"] { background: #d81b60; color: white; }
         .tile.pink[data-value="64"] { background: #ad1457; color: white; }
-        .tile.pink[data-value="128"] { background: #880e4f; color: white; font-size: 21.6px; }
-        .tile.pink[data-value="256"] { background: #6a0d3a; color: white; font-size: 21.6px; }
-        .tile.pink[data-value="512"] { background: #4a0828; color: white; font-size: 21.6px; }
-        .tile.pink[data-value="1024"] { background: #300519; color: white; font-size: 17.6px; }
-        .tile.pink[data-value="2048"] { background: #1a020e; color: #ffd700; font-size: 17.6px; }
+        .tile.pink[data-value="128"] { background: #880e4f; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.pink[data-value="256"] { background: #6a0d3a; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.pink[data-value="512"] { background: #4a0828; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.pink[data-value="1024"] { background: #300519; color: white; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile.pink[data-value="2048"] { background: #1a020e; color: #ffd700; font-size: clamp(11px, 2.6vw, 18px); }
 
         .tile.space[data-value="2"] { background: #b39ddb; color: #311b92; }
         .tile.space[data-value="4"] { background: #9575cd; color: #311b92; }
@@ -301,11 +361,11 @@
         .tile.space[data-value="16"] { background: #5e35b1; color: white; }
         .tile.space[data-value="32"] { background: #4527a0; color: white; }
         .tile.space[data-value="64"] { background: #311b92; color: white; }
-        .tile.space[data-value="128"] { background: #1a237e; color: white; font-size: 21.6px; }
-        .tile.space[data-value="256"] { background: #0d1440; color: white; font-size: 21.6px; }
-        .tile.space[data-value="512"] { background: #060a20; color: white; font-size: 21.6px; }
-        .tile.space[data-value="1024"] { background: #030510; color: white; font-size: 17.6px; }
-        .tile.space[data-value="2048"] { background: #010208; color: #ffd700; font-size: 17.6px; }
+        .tile.space[data-value="128"] { background: #1a237e; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.space[data-value="256"] { background: #0d1440; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.space[data-value="512"] { background: #060a20; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.space[data-value="1024"] { background: #030510; color: white; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile.space[data-value="2048"] { background: #010208; color: #ffd700; font-size: clamp(11px, 2.6vw, 18px); }
 
         .tile.ocean[data-value="2"] { background: #b3e5fc; color: #01579b; }
         .tile.ocean[data-value="4"] { background: #81d4fa; color: #01579b; }
@@ -313,11 +373,11 @@
         .tile.ocean[data-value="16"] { background: #26c6da; color: white; }
         .tile.ocean[data-value="32"] { background: #00bcd4; color: white; }
         .tile.ocean[data-value="64"] { background: #00838f; color: white; }
-        .tile.ocean[data-value="128"] { background: #006064; color: white; font-size: 21.6px; }
-        .tile.ocean[data-value="256"] { background: #004d40; color: white; font-size: 21.6px; }
-        .tile.ocean[data-value="512"] { background: #00332a; color: white; font-size: 21.6px; }
-        .tile.ocean[data-value="1024"] { background: #001f17; color: white; font-size: 17.6px; }
-        .tile.ocean[data-value="2048"] { background: #000f0b; color: #ffd700; font-size: 17.6px; }
+        .tile.ocean[data-value="128"] { background: #006064; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.ocean[data-value="256"] { background: #004d40; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.ocean[data-value="512"] { background: #00332a; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.ocean[data-value="1024"] { background: #001f17; color: white; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile.ocean[data-value="2048"] { background: #000f0b; color: #ffd700; font-size: clamp(11px, 2.6vw, 18px); }
 
         .tile.orange[data-value="2"] { background: #ffccbc; color: #bf360c; }
         .tile.orange[data-value="4"] { background: #ffab91; color: #bf360c; }
@@ -325,11 +385,11 @@
         .tile.orange[data-value="16"] { background: #ff7043; color: white; }
         .tile.orange[data-value="32"] { background: #ff5722; color: white; }
         .tile.orange[data-value="64"] { background: #e64a19; color: white; }
-        .tile.orange[data-value="128"] { background: #bf360c; color: white; font-size: 21.6px; }
-        .tile.orange[data-value="256"] { background: #8d2e00; color: white; font-size: 21.6px; }
-        .tile.orange[data-value="512"] { background: #5f1f00; color: white; font-size: 21.6px; }
-        .tile.orange[data-value="1024"] { background: #3d1400; color: white; font-size: 17.6px; }
-        .tile.orange[data-value="2048"] { background: #1f0a00; color: #ffd700; font-size: 17.6px; }
+        .tile.orange[data-value="128"] { background: #bf360c; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.orange[data-value="256"] { background: #8d2e00; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.orange[data-value="512"] { background: #5f1f00; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.orange[data-value="1024"] { background: #3d1400; color: white; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile.orange[data-value="2048"] { background: #1f0a00; color: #ffd700; font-size: clamp(11px, 2.6vw, 18px); }
 
         .tile.halloween[data-value="2"] { background: #ff8a65; color: #3e2723; }
         .tile.halloween[data-value="4"] { background: #ff6f00; color: #3e2723; }
@@ -337,11 +397,11 @@
         .tile.halloween[data-value="16"] { background: #bf360c; color: white; }
         .tile.halloween[data-value="32"] { background: #7f2d0a; color: white; }
         .tile.halloween[data-value="64"] { background: #4a148c; color: white; }
-        .tile.halloween[data-value="128"] { background: #311b92; color: white; font-size: 21.6px; }
-        .tile.halloween[data-value="256"] { background: #1a237e; color: white; font-size: 21.6px; }
-        .tile.halloween[data-value="512"] { background: #0d1440; color: white; font-size: 21.6px; }
-        .tile.halloween[data-value="1024"] { background: #060a20; color: white; font-size: 17.6px; }
-        .tile.halloween[data-value="2048"] { background: #010208; color: #ff6f00; font-size: 17.6px; }
+        .tile.halloween[data-value="128"] { background: #311b92; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.halloween[data-value="256"] { background: #1a237e; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.halloween[data-value="512"] { background: #0d1440; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.halloween[data-value="1024"] { background: #060a20; color: white; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile.halloween[data-value="2048"] { background: #010208; color: #ff6f00; font-size: clamp(11px, 2.6vw, 18px); }
 
         .tile.winter[data-value="2"] { background: #e3f2fd; color: #0d47a1; }
         .tile.winter[data-value="4"] { background: #bbdefb; color: #0d47a1; }
@@ -349,11 +409,11 @@
         .tile.winter[data-value="16"] { background: #64b5f6; color: white; }
         .tile.winter[data-value="32"] { background: #42a5f5; color: white; }
         .tile.winter[data-value="64"] { background: #1e88e5; color: white; }
-        .tile.winter[data-value="128"] { background: #1565c0; color: white; font-size: 21.6px; }
-        .tile.winter[data-value="256"] { background: #0d47a1; color: white; font-size: 21.6px; }
-        .tile.winter[data-value="512"] { background: #072a6e; color: white; font-size: 21.6px; }
-        .tile.winter[data-value="1024"] { background: #041a47; color: white; font-size: 17.6px; }
-        .tile.winter[data-value="2048"] { background: #020d24; color: #90caf9; font-size: 17.6px; }
+        .tile.winter[data-value="128"] { background: #1565c0; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.winter[data-value="256"] { background: #0d47a1; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.winter[data-value="512"] { background: #072a6e; color: white; font-size: clamp(13px, 3.2vw, 22px); }
+        .tile.winter[data-value="1024"] { background: #041a47; color: white; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile.winter[data-value="2048"] { background: #020d24; color: #90caf9; font-size: clamp(11px, 2.6vw, 18px); }
 
         .grid-bg-default { background: #bbada0; }
         .grid-bg-dark { background: #16213e; }
@@ -364,55 +424,68 @@
 
         .controls-row {
             display: flex;
-            gap: 5.9px;
+            gap: 5px;
             justify-content: center;
-            margin-top: 9.8px;
+            margin-top: 4px;
             flex-wrap: wrap;
+            flex-shrink: 0;
         }
         .btn {
-            padding: 5.9px 13.7px;
-            font-size: 12.7px;
+            padding: 6px 16px;
+            font-size: clamp(12px, 2.6vw, 15px);
             background: var(--btn-bg);
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             transition: 0.2s;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .btn:hover { background: var(--btn-hover); }
-        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn:active { transform: scale(0.95); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
         .btn-hint { background: #6c5b7b; }
-        .btn-hint:hover { background: #7d6b8d; }
-        .btn-small { font-size: 10.8px; padding: 3.9px 9.8px; }
+        .btn-small { font-size: clamp(10px, 2vw, 12px); padding: 4px 12px; min-height: 32px; }
 
         .hint-area {
-            margin-top: 5.9px;
-            padding: 5.9px 11.8px;
+            margin-top: 3px;
+            padding: 3px 7px;
             background: var(--hint-bg);
-            border-radius: 7.8px;
-            font-size: 11.8px;
-            min-height: 33px;
+            border-radius: 5px;
+            font-size: clamp(9px, 1.6vw, 12px);
+            min-height: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: background 0.3s;
             color: var(--text);
             opacity: 0.7;
+            flex-shrink: 0;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            line-height: 1.3;
         }
-        .hint-area .hint-icon { margin-right: 3.9px; font-size: 13.7px; }
+        .hint-area .hint-icon { margin-right: 3px; font-size: clamp(10px, 1.8vw, 13px); }
 
         .game-over {
-            margin-top: 5.9px;
-            font-size: 21.6px;
+            margin-top: 3px;
+            font-size: clamp(15px, 2.8vw, 20px);
             color: var(--gameover-color);
             font-weight: bold;
             display: none;
             transition: color 0.3s;
+            flex-shrink: 0;
         }
         .controls-hint {
-            margin-top: 2.9px;
-            font-size: 10.8px;
+            margin-top: 1px;
+            font-size: clamp(7px, 1.2vw, 9px);
             opacity: 0.4;
+            flex-shrink: 0;
         }
 
         .combo-display {
@@ -420,7 +493,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 47px;
+            font-size: clamp(28px, 7vw, 44px);
             font-weight: bold;
             color: #ffd700;
             text-shadow: 0 0 30px rgba(255,215,0,0.5);
@@ -441,151 +514,42 @@
 
         .particle-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
             z-index: 100;
         }
         .particle {
             position: absolute;
             border-radius: 50%;
-            animation: particleFly 0.6s ease-out forwards;
+            animation: particleFly 0.5s ease-out forwards;
             background: #ffd700;
-            box-shadow: 0 0 6px rgba(255,215,0,0.6);
+            box-shadow: 0 0 5px rgba(255,215,0,0.5);
         }
         @keyframes particleFly {
             0% { transform: translate(0, 0) scale(1); opacity: 1; }
             100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
         }
 
-        .shop-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 7.8px;
-            margin-top: 9.8px;
-        }
-        .shop-item {
-            background: var(--shop-item-bg);
-            border: 2px solid var(--shop-item-border);
-            border-radius: 10px;
-            padding: 7.8px 11.8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: 0.2s;
-        }
-        .shop-item-info { text-align: left; }
-        .shop-item-name {
-            font-weight: bold;
-            font-size: 13.7px;
-        }
-        .shop-item-desc {
-            font-size: 10.8px;
-            opacity: 0.6;
-        }
-        .shop-btn {
-            padding: 4.9px 11.8px;
-            font-size: 11.8px;
-            font-weight: bold;
-            background: var(--btn-bg);
+        .toast {
+            position: fixed;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #27ae60;
             color: white;
-            border: none;
+            padding: 4px 12px;
             border-radius: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-            white-space: nowrap;
-        }
-        .shop-btn:hover { background: var(--btn-hover); }
-        .shop-btn.owned { background: #27ae60; cursor: default; }
-        .shop-btn.owned:hover { background: #27ae60; }
-        .shop-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .shop-btn.reset-theme { background: #e74c3c; }
-        .shop-btn.reset-theme:hover { background: #c0392b; }
-
-        .achievement-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 5.9px;
-            margin-top: 9.8px;
-        }
-        .achievement-item {
-            background: var(--achievement-bg);
-            border: 2px solid var(--achievement-border);
-            border-radius: 10px;
-            padding: 7.8px 11.8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: 0.2s;
-        }
-        .achievement-item.unlocked {
-            border-color: #27ae60;
-            background: rgba(39,174,96,0.1);
-        }
-        .achievement-item-info { text-align: left; }
-        .achievement-item-name {
             font-weight: bold;
-            font-size: 13.7px;
-        }
-        .achievement-item-desc {
-            font-size: 10.8px;
-            opacity: 0.6;
-        }
-        .achievement-status { font-size: 21.6px; }
-
-        .stat-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 7.8px;
-            margin-top: 9.8px;
-        }
-        .stat-item {
-            background: var(--shop-item-bg);
-            border-radius: 10px;
-            padding: 9.8px;
+            font-size: clamp(10px, 2vw, 13px);
+            z-index: 2000;
+            box-shadow: 0 3px 16px rgba(0,0,0,0.25);
+            animation: fadePage 0.3s ease;
+            max-width: 90%;
             text-align: center;
         }
-        .stat-item .stat-value {
-            font-size: 21.6px;
-            font-weight: bold;
-        }
-        .stat-item .stat-label {
-            font-size: 10.8px;
-            opacity: 0.6;
-        }
-
-        .mode-selector {
-            display: flex;
-            gap: 5.9px;
-            justify-content: center;
-            margin-bottom: 7.8px;
-            flex-wrap: wrap;
-        }
-        .mode-btn {
-            padding: 4.9px 11.8px;
-            font-size: 11.8px;
-            background: var(--shop-item-bg);
-            border: 2px solid var(--shop-item-border);
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-            color: var(--text);
-        }
-        .mode-btn.active {
-            border-color: #27ae60;
-            background: rgba(39,174,96,0.15);
-        }
-        .mode-btn:hover { opacity: 0.8; }
-
-        .timer-display {
-            font-size: 25.5px;
-            font-weight: bold;
-            color: var(--gameover-color);
-            margin: 5.9px 0;
-            display: none;
-        }
+        .toast-error { background: #e74c3c; }
+        .toast-gold { background: #f39c12; }
 
         .modal-overlay {
             position: fixed;
@@ -605,67 +569,45 @@
         .modal-box {
             background: var(--modal-content);
             color: var(--modal-text);
-            padding: 19.6px 24.5px;
-            border-radius: 12px;
-            max-width: 412px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            max-width: 360px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 16px 50px rgba(0,0,0,0.25);
             transition: background 0.3s, color 0.3s;
         }
         .modal-box h2 {
             text-align: center;
-            margin-bottom: 11.8px;
-            font-size: 21.6px;
+            margin-bottom: 8px;
+            font-size: clamp(16px, 3.5vw, 20px);
         }
         .modal-close {
             display: block;
-            margin: 11.8px auto 0;
-            padding: 5.9px 24.5px;
-            font-size: 13.7px;
+            margin: 8px auto 0;
+            padding: 5px 16px;
+            font-size: clamp(10px, 2vw, 13px);
             background: var(--btn-bg);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
         }
-        .modal-close:hover { background: var(--btn-hover); }
 
         .leader-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 7.8px 11.8px;
+            padding: 5px 8px;
             border-bottom: 1px solid rgba(0,0,0,0.08);
-            font-size: 15.7px;
-            gap: 7.8px;
+            font-size: clamp(12px, 2.5vw, 16px);
+            gap: 5px;
         }
-        .leader-item .pos { font-weight: bold; width: 34px; text-align: center; font-size: 17.6px; }
+        .leader-item .pos { font-weight: bold; width: 26px; text-align: center; font-size: clamp(12px, 2.5vw, 16px); }
         .leader-item .name { flex: 1; text-align: left; font-weight: 500; }
-        .leader-item .lscore { font-weight: bold; font-size: 15.7px; color: var(--header-text); }
-        .leader-empty { text-align: center; opacity: 0.5; padding: 19.6px 0; font-size: 13.7px; }
-        .leader-item:first-child .pos { color: #ffd700; }
-        .leader-item:nth-child(2) .pos { color: #c0c0c0; }
-        .leader-item:nth-child(3) .pos { color: #cd7f32; }
-
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #27ae60;
-            color: white;
-            padding: 7.8px 17.6px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 13.7px;
-            z-index: 2000;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            animation: fadePage 0.3s ease;
-        }
-        .toast-error { background: #e74c3c; }
-        .toast-gold { background: #f39c12; }
+        .leader-item .lscore { font-weight: bold; font-size: clamp(11px, 2.2vw, 14px); color: var(--header-text); }
+        .leader-empty { text-align: center; opacity: 0.5; padding: 12px 0; font-size: clamp(10px, 2vw, 13px); }
 
         .tutorial-overlay {
             position: fixed;
@@ -680,79 +622,173 @@
         .tutorial-box {
             background: var(--modal-content);
             color: var(--modal-text);
-            padding: 24.5px 29.4px;
-            border-radius: 12px;
-            max-width: 392px;
+            padding: 16px 20px;
+            border-radius: 10px;
+            max-width: 340px;
             width: 90%;
             text-align: center;
             transition: background 0.3s, color 0.3s;
         }
-        .tutorial-box h3 { font-size: 21.6px; margin-bottom: 9.8px; }
-        .tutorial-box p { font-size: 14.7px; opacity: 0.8; margin-bottom: 14.7px; line-height: 1.5; }
-        .tutorial-box .tutorial-progress {
-            font-size: 12.7px;
-            opacity: 0.5;
-            margin-bottom: 9.8px;
+        .tutorial-box h3 { font-size: clamp(16px, 3.5vw, 20px); margin-bottom: 6px; }
+        .tutorial-box p { font-size: clamp(12px, 2.2vw, 14px); opacity: 0.8; margin-bottom: 10px; line-height: 1.4; }
+        .tutorial-box .tutorial-progress { font-size: clamp(10px, 1.8vw, 12px); opacity: 0.5; margin-bottom: 6px; }
+
+        /* ===== СКРЫТЫЕ СТРАНИЦЫ (упрощённые) ===== */
+        #pageShop, #pageAchievements, #pageStats, #pageSettings {
+            display: none !important;
         }
 
-        .settings-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 9.8px;
-            margin-top: 9.8px;
+        /* ===== САМЫЕ МАЛЕНЬКИЕ ЭКРАНЫ ===== */
+        @media (max-height: 700px) {
+            .grid-wrapper { padding: 5px; max-width: min(100%, 360px); }
+            .grid { gap: 5px; }
+            .tile { font-size: clamp(13px, 3.2vw, 20px); }
+            .header { margin-bottom: 1px; }
+            .scores { margin-bottom: 1px; }
+            .controls-row { margin-top: 2px; }
+            .hint-area { min-height: 18px; padding: 1px 4px; font-size: clamp(8px, 1.4vw, 10px); }
+            .menu-title { font-size: clamp(30px, 6.5vw, 42px); }
+            .menu-btn { padding: 6px; font-size: clamp(11px, 2.2vw, 13px); }
+            .btn { padding: 5px 12px; font-size: clamp(11px, 2.2vw, 13px); min-height: 30px; }
         }
-        .settings-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 7.8px 11.8px;
-            background: var(--shop-item-bg);
-            border-radius: 8px;
-        }
-        .settings-item-label {
-            font-weight: bold;
-            font-size: 13.7px;
-        }
-        .settings-item-control {
-            display: flex;
-            gap: 5.9px;
-            align-items: center;
-        }
-        .settings-btn {
-            padding: 3.9px 11.8px;
-            font-size: 11.8px;
-            background: var(--btn-bg);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .settings-btn:hover { background: var(--btn-hover); }
-        .settings-btn.active { background: #27ae60; }
 
-        @media (max-width: 500px) {
-            .grid-wrapper { padding: 4.9px; }
-            .grid { gap: 4.9px; }
-            .tile { font-size: 17.6px; }
-            .tile[data-value="128"] { font-size: 15.7px; }
-            .tile[data-value="256"] { font-size: 15.7px; }
-            .tile[data-value="512"] { font-size: 15.7px; }
-            .tile[data-value="1024"] { font-size: 12.7px; }
-            .tile[data-value="2048"] { font-size: 12.7px; }
-            .menu-title { font-size: 41.2px; margin-top: 14.7px; }
-            h1 { font-size: 19.6px; }
-            .score-container span { font-size: 13.7px; }
-            .btn { padding: 4.9px 11.8px; font-size: 10.8px; }
-            .modal-box { padding: 14.7px; }
-            .shop-item { padding: 5.9px 9.8px; flex-wrap: wrap; gap: 3.9px; }
-            .shop-item-name { font-size: 12.7px; }
-            .stat-grid { grid-template-columns: 1fr 1fr; gap: 3.9px; }
-            .stat-item .stat-value { font-size: 17.6px; }
-            .leader-item { font-size: 12.7px; padding: 5.9px 9.8px; }
-            .leader-item .pos { width: 27px; font-size: 13.7px; }
-            .leader-item .lscore { font-size: 12.7px; }
-            .combo-display { font-size: 31.4px; }
+        @media (max-height: 600px) {
+            .grid-wrapper { padding: 4px; max-width: min(100%, 320px); }
+            .grid { gap: 4px; }
+            .tile { font-size: clamp(11px, 2.8vw, 16px) !important; }
+            .tile[data-value="128"],
+            .tile[data-value="256"],
+            .tile[data-value="512"] { font-size: clamp(10px, 2.4vw, 14px) !important; }
+            .tile[data-value="1024"],
+            .tile[data-value="2048"] { font-size: clamp(9px, 2vw, 12px) !important; }
+            .header { margin-bottom: 0px; }
+            .scores { margin-bottom: 0px; }
+            .score-container { padding: 0px 4px; font-size: clamp(7px, 1.2vw, 9px); }
+            .score-container span { font-size: clamp(9px, 1.8vw, 12px); }
+            .mode-btn { padding: 1px 6px; font-size: clamp(8px, 1.4vw, 10px); }
+            .btn { padding: 4px 10px; font-size: clamp(9px, 1.6vw, 11px); min-height: 26px; }
+            .hint-area { min-height: 16px; padding: 0px 3px; font-size: clamp(7px, 1.2vw, 9px); }
+            .game-over { font-size: clamp(12px, 2.2vw, 16px); }
+            .controls-hint { font-size: clamp(7px, 1vw, 8px); }
+            .menu-title { font-size: clamp(24px, 5.5vw, 32px); }
+            .menu-btn { padding: 4px; font-size: clamp(10px, 1.8vw, 11px); }
+            .coins-display { padding: 0px 4px; font-size: clamp(7px, 1.2vw, 9px); }
+            .coins-display span { font-size: clamp(8px, 1.4vw, 10px); }
+            .container { padding: 2px; }
+        }
+
+        /* ===== ТЕЛЕФОНЫ: Убираем лишнее пустое место сверху ===== */
+        @media (max-width: 500px) and (max-height: 900px) {
+            .game-wrapper {
+                padding: 0px 0;
+                justify-content: center;
+            }
+            .header {
+                margin-bottom: 1px;
+            }
+            .mode-selector {
+                margin-bottom: 1px;
+            }
+            .scores {
+                margin-bottom: 1px;
+            }
+            .grid-wrapper {
+                padding: 5px;
+                max-width: min(100%, 380px);
+            }
+            .grid {
+                gap: 5px;
+            }
+            .controls-row {
+                margin-top: 2px;
+                gap: 4px;
+            }
+            .btn {
+                padding: 6px 14px;
+                font-size: clamp(12px, 2.8vw, 15px);
+                min-height: 34px;
+                border-radius: 8px;
+            }
+            .btn-small {
+                padding: 4px 10px;
+                font-size: clamp(10px, 2.2vw, 12px);
+                min-height: 30px;
+            }
+            .hint-area {
+                margin-top: 2px;
+                padding: 2px 6px;
+                font-size: clamp(9px, 1.8vw, 11px);
+                min-height: 20px;
+            }
+            .game-over {
+                margin-top: 2px;
+                font-size: clamp(14px, 3vw, 18px);
+            }
+            .controls-hint {
+                font-size: clamp(8px, 1.4vw, 10px);
+            }
+            .coins-display {
+                font-size: clamp(9px, 2vw, 11px);
+            }
+            .coins-display span {
+                font-size: clamp(10px, 2.2vw, 13px);
+            }
+            h1 {
+                font-size: clamp(17px, 3.8vw, 22px);
+            }
+            .back-btn {
+                font-size: clamp(12px, 2.8vw, 16px);
+                padding: 2px 6px;
+            }
+        }
+
+        @media (max-width: 400px) and (max-height: 800px) {
+            .grid-wrapper {
+                padding: 4px;
+                max-width: min(100%, 340px);
+            }
+            .grid {
+                gap: 4px;
+            }
+            .tile {
+                font-size: clamp(13px, 3vw, 18px) !important;
+            }
+            .tile[data-value="128"],
+            .tile[data-value="256"],
+            .tile[data-value="512"] {
+                font-size: clamp(11px, 2.5vw, 15px) !important;
+            }
+            .tile[data-value="1024"],
+            .tile[data-value="2048"] {
+                font-size: clamp(10px, 2.2vw, 13px) !important;
+            }
+            .btn {
+                padding: 5px 10px;
+                font-size: clamp(10px, 2.4vw, 13px);
+                min-height: 30px;
+            }
+            .btn-small {
+                padding: 3px 8px;
+                font-size: clamp(9px, 2vw, 11px);
+                min-height: 26px;
+            }
+            .header {
+                margin-bottom: 0px;
+            }
+            .scores {
+                margin-bottom: 0px;
+            }
+            .score-container {
+                padding: 0px 5px;
+            }
+            .score-container span {
+                font-size: clamp(9px, 2vw, 12px);
+            }
+            .hint-area {
+                font-size: clamp(8px, 1.6vw, 10px);
+                min-height: 18px;
+                padding: 1px 4px;
+            }
         }
     </style>
 </head>
@@ -763,6 +799,7 @@
 
     <div class="container" id="app">
 
+        <!-- МЕНЮ -->
         <div class="page active" id="pageMenu">
             <div class="menu-title">2048</div>
             <div class="menu-subtitle">Собирай плитки, зарабатывай монеты!</div>
@@ -771,58 +808,62 @@
                 <button class="menu-btn menu-btn-secondary" id="menuShop">🛒 Магазин</button>
                 <button class="menu-btn menu-btn-secondary" id="menuAchievements">🏅 Достижения</button>
                 <button class="menu-btn menu-btn-secondary" id="menuStats">📊 Статистика</button>
-                <button class="menu-btn menu-btn-success" id="menuBonus">🎁 Ежедневный бонус</button>
+                <button class="menu-btn menu-btn-success" id="menuBonus">🎁 Бонус</button>
                 <button class="menu-btn menu-btn-secondary" id="menuLeaders">🏆 Лидеры</button>
                 <button class="menu-btn menu-btn-secondary" id="menuSettings">⚙️ Настройки</button>
                 <button class="menu-btn menu-btn-small" id="menuTutorial">🎓 Обучение</button>
-                <button class="menu-btn menu-btn-small" id="menuFullscreen">⛶ Полный экран</button>
+                <button class="menu-btn menu-btn-small" id="menuFullscreen">⛶ Fullscreen</button>
             </div>
             <div class="menu-coins">🪙 Монет: <span id="menuCoins">0</span></div>
         </div>
 
+        <!-- ИГРА -->
         <div class="page" id="pageGame">
-            <div class="header">
-                <div class="title-block">
-                    <button class="back-btn" id="gameBack">←</button>
-                    <h1>2048</h1>
+            <div class="game-wrapper">
+                <div class="header">
+                    <div class="title-block">
+                        <button class="back-btn" id="gameBack">←</button>
+                        <h1>2048</h1>
+                    </div>
+                    <div class="coins-display">🪙 <span id="gameCoins">0</span></div>
                 </div>
-                <div class="coins-display">🪙 <span id="gameCoins">0</span></div>
+
+                <div class="mode-selector" id="modeSelector">
+                    <button class="mode-btn active" data-mode="classic">4×4</button>
+                    <button class="mode-btn" data-mode="big">6×6</button>
+                    <button class="mode-btn" data-mode="timer">⏱️ Таймер</button>
+                </div>
+
+                <div class="scores">
+                    <div class="score-container">Счёт<span id="score">0</span></div>
+                    <div class="score-container">Лучший<span id="bestScore">0</span></div>
+                </div>
+
+                <div class="timer-display" id="timerDisplay">60</div>
+
+                <div class="grid-wrapper" id="gridWrapper">
+                    <div class="grid grid-4" id="grid"></div>
+                    <div class="combo-display" id="comboDisplay">🔥 x2</div>
+                </div>
+
+                <div class="controls-row">
+                    <button class="btn" id="undoBtn" disabled>↩</button>
+                    <button class="btn" id="resetBtn">🔄 Новая</button>
+                    <button class="btn btn-hint" id="hintBtn">💡</button>
+                    <button class="btn btn-small" id="shareBtn">📤</button>
+                </div>
+
+                <div class="hint-area" id="hintArea">
+                    <span class="hint-icon">💡</span>
+                    <span id="hintText">Соединяй одинаковые плитки, чтобы получить 2048!</span>
+                </div>
+
+                <div class="game-over" id="gameOver">💥 Игра окончена!</div>
+                <div class="controls-hint">Стрелки · Свайпы · F1 — подсказка</div>
             </div>
-
-            <div class="mode-selector" id="modeSelector">
-                <button class="mode-btn active" data-mode="classic">4×4</button>
-                <button class="mode-btn" data-mode="big">6×6</button>
-                <button class="mode-btn" data-mode="timer">⏱️ Таймер</button>
-            </div>
-
-            <div class="scores">
-                <div class="score-container">Счёт<span id="score">0</span></div>
-                <div class="score-container">Лучший<span id="bestScore">0</span></div>
-            </div>
-
-            <div class="timer-display" id="timerDisplay">60</div>
-
-            <div class="grid-wrapper" id="gridWrapper">
-                <div class="grid grid-4" id="grid"></div>
-                <div class="combo-display" id="comboDisplay">🔥 x2</div>
-            </div>
-
-            <div class="controls-row">
-                <button class="btn" id="undoBtn" disabled>↩</button>
-                <button class="btn" id="resetBtn">🔄 Новая</button>
-                <button class="btn btn-hint" id="hintBtn">💡</button>
-                <button class="btn btn-small" id="shareBtn">📤</button>
-            </div>
-
-            <div class="hint-area" id="hintArea">
-                <span class="hint-icon">💡</span>
-                <span id="hintText">Соединяй одинаковые плитки, чтобы получить 2048!</span>
-            </div>
-
-            <div class="game-over" id="gameOver">💥 Игра окончена!</div>
-            <div class="controls-hint">Стрелки ← ↑ → ↓ · Свайпы · F1 — подсказка</div>
         </div>
 
+        <!-- МАГАЗИН (упрощён) -->
         <div class="page" id="pageShop">
             <div class="header">
                 <div class="title-block">
@@ -834,6 +875,7 @@
             <div class="shop-grid" id="shopGrid"></div>
         </div>
 
+        <!-- ДОСТИЖЕНИЯ (упрощён) -->
         <div class="page" id="pageAchievements">
             <div class="header">
                 <div class="title-block">
@@ -844,6 +886,7 @@
             <div class="achievement-grid" id="achievementGrid"></div>
         </div>
 
+        <!-- СТАТИСТИКА (упрощён) -->
         <div class="page" id="pageStats">
             <div class="header">
                 <div class="title-block">
@@ -854,6 +897,7 @@
             <div class="stat-grid" id="statGrid"></div>
         </div>
 
+        <!-- НАСТРОЙКИ (упрощён) -->
         <div class="page" id="pageSettings">
             <div class="header">
                 <div class="title-block">
@@ -864,6 +908,7 @@
             <div class="settings-grid" id="settingsGrid"></div>
         </div>
 
+        <!-- ЛИДЕРЫ -->
         <div class="modal-overlay" id="modalOverlay">
             <div class="modal-box">
                 <h2>🏆 Таблица лидеров</h2>
@@ -872,13 +917,14 @@
             </div>
         </div>
 
+        <!-- ОБУЧЕНИЕ -->
         <div class="tutorial-overlay" id="tutorialOverlay">
             <div class="tutorial-box">
                 <h3 id="tutorialTitle">🎓 Добро пожаловать!</h3>
                 <p id="tutorialText">Соединяй одинаковые плитки, чтобы получить 2048. Используй стрелки или свайпы для управления.</p>
                 <div class="tutorial-progress" id="tutorialProgress">1 / 6</div>
                 <button class="menu-btn" id="tutorialNext">Далее →</button>
-                <button class="menu-btn menu-btn-small" id="tutorialSkip" style="margin-top:8px; background:#6c5b7b;">Пропустить</button>
+                <button class="menu-btn menu-btn-small" id="tutorialSkip" style="margin-top:5px; background:#6c5b7b;">Пропустить</button>
             </div>
         </div>
 
@@ -911,41 +957,7 @@
             const UNDO_PRICE = 1;
             const FREE_UNDO = 3;
 
-            const ACHIEVEMENTS_LIST = [
-                { id: 'score_100', name: 'Первые 100', desc: 'Набрать 100 очков', reward: 1, check: s => s >= 100 },
-                { id: 'tile_128', name: 'Плитка 128', desc: 'Собрать плитку 128', reward: 3, check: s => s >= 128 },
-                { id: 'tile_512', name: 'Плитка 512', desc: 'Собрать плитку 512', reward: 5, check: s => s >= 512 },
-                { id: 'tile_2048', name: 'Плитка 2048!', desc: 'Собрать плитку 2048', reward: 10, check: s => s >= 2048 },
-                { id: 'five_2048', name: 'Мастер 2048', desc: 'Собрать 5 плиток 2048 за игру', reward: 25, check: s => s >= 2048 * 5 },
-                { id: 'games_10', name: 'Игровой стаж', desc: 'Сыграть 10 игр', reward: 15, check: s => s >= 10 },
-                { id: 'master_4096', name: '🧙‍♂️ Мастер 4096', desc: 'Собрать плитку 4096', reward: 10, check: s => s >= 4096 },
-                { id: 'sprinter', name: '⚡ Спринтер', desc: 'Набрать 500 очков за 30 сек в таймере', reward: 3, check: s => s >= 500 },
-                { id: 'survivor', name: '🛡️ Живучий', desc: 'Сделать 50 ходов без слияния', reward: 10, check: s => s >= 50 },
-                { id: 'precise', name: '🎯 Точный', desc: 'Закончить игру с счётом, кратным 1000', reward: 10, check: s => s >= 1000 && s % 1000 === 0 },
-                { id: 'combo_master', name: '🔥 Комбо', desc: 'Сделать 3 слияния подряд', reward: 2, check: s => s >= 3 },
-                { id: 'collector', name: '💎 Коллекционер', desc: 'Купить все темы', reward: 30, check: s => s >= 1 },
-            ];
-
-            const SHOP_ITEMS = [
-                { id: 'green', type: 'tile', name: 'Зелёная', desc: 'Спокойные зелёные оттенки', price: 40, icon: '🌿' },
-                { id: 'pink', type: 'tile', name: 'Розовая', desc: 'Нежные розовые тона', price: 40, icon: '🌸' },
-                { id: 'space', type: 'tile', name: 'Космическая', desc: 'Тёмно-синие/фиолетовые оттенки', price: 50, icon: '🪐' },
-                { id: 'ocean', type: 'tile', name: 'Океан', desc: 'Голубые/бирюзовые цвета', price: 45, icon: '🌊' },
-                { id: 'orange', type: 'tile', name: 'Апельсиновая', desc: 'Оранжево-жёлтые оттенки', price: 45, icon: '🍊' },
-                { id: 'halloween', type: 'tile', name: 'Хэллоуин', desc: 'Оранжевый/чёрный/фиолетовый', price: 50, icon: '🎃' },
-                { id: 'winter', type: 'tile', name: 'Зимняя', desc: 'Бело-голубые холодные тона', price: 45, icon: '❄️' },
-                { id: 'dark', type: 'ui', name: 'Тёмная тема', desc: 'Интерфейс в тёмных тонах', price: 20, icon: '🌙' },
-            ];
-
-            const BG_SKINS = [
-                { id: 'default', name: 'Классический', desc: 'Стандартный фон', price: 0, icon: '🎨' },
-                { id: 'dark', name: 'Тёмный', desc: 'Тёмный фон для сетки', price: 15, icon: '🌚' },
-                { id: 'ocean', name: 'Океан', desc: 'Глубокий синий', price: 20, icon: '🌊' },
-                { id: 'forest', name: 'Лес', desc: 'Зелёный лесной фон', price: 20, icon: '🌲' },
-                { id: 'sunset', name: 'Закат', desc: 'Тёплые закатные тона', price: 20, icon: '🌅' },
-                { id: 'space', name: 'Космос', desc: 'Тёмный космический фон', price: 25, icon: '🌌' },
-            ];
-
+            // ===== СОСТОЯНИЕ =====
             let grid = [];
             let score = 0;
             let bestScore = parseInt(localStorage.getItem(STORAGE.BEST)) || 0;
@@ -1006,37 +1018,33 @@
             let timerInterval = null;
             let gameActive = false;
 
-            const pages = {
-                menu: document.getElementById('pageMenu'),
-                game: document.getElementById('pageGame'),
-                shop: document.getElementById('pageShop'),
-                achievements: document.getElementById('pageAchievements'),
-                stats: document.getElementById('pageStats'),
-                settings: document.getElementById('pageSettings'),
-            };
-            const menuCoins = document.getElementById('menuCoins');
-            const gameCoins = document.getElementById('gameCoins');
-            const shopCoins = document.getElementById('shopCoins');
-            const gridEl = document.getElementById('grid');
-            const gridWrapper = document.getElementById('gridWrapper');
-            const scoreEl = document.getElementById('score');
-            const bestScoreEl = document.getElementById('bestScore');
-            const gameOverEl = document.getElementById('gameOver');
-            const timerDisplay = document.getElementById('timerDisplay');
-            const comboDisplay = document.getElementById('comboDisplay');
-            const undoBtn = document.getElementById('undoBtn');
-            const resetBtn = document.getElementById('resetBtn');
-            const hintBtn = document.getElementById('hintBtn');
-            const shareBtn = document.getElementById('shareBtn');
-            const modalOverlay = document.getElementById('modalOverlay');
-            const modalClose = document.getElementById('modalClose');
-            const leaderList = document.getElementById('leaderList');
-            const shopGrid = document.getElementById('shopGrid');
-            const achievementGrid = document.getElementById('achievementGrid');
-            const statGrid = document.getElementById('statGrid');
-            const settingsGrid = document.getElementById('settingsGrid');
-            const hintText = document.getElementById('hintText');
-            const particleContainer = document.getElementById('particleContainer');
+            // ===== DOM =====
+            const $ = id => document.getElementById(id);
+            const $$ = sel => document.querySelectorAll(sel);
+
+            const menuCoins = $('menuCoins');
+            const gameCoins = $('gameCoins');
+            const shopCoins = $('shopCoins');
+            const gridEl = $('grid');
+            const gridWrapper = $('gridWrapper');
+            const scoreEl = $('score');
+            const bestScoreEl = $('bestScore');
+            const gameOverEl = $('gameOver');
+            const timerDisplay = $('timerDisplay');
+            const comboDisplay = $('comboDisplay');
+            const undoBtn = $('undoBtn');
+            const resetBtn = $('resetBtn');
+            const hintBtn = $('hintBtn');
+            const shareBtn = $('shareBtn');
+            const modalOverlay = $('modalOverlay');
+            const modalClose = $('modalClose');
+            const leaderList = $('leaderList');
+            const shopGrid = $('shopGrid');
+            const achievementGrid = $('achievementGrid');
+            const statGrid = $('statGrid');
+            const settingsGrid = $('settingsGrid');
+            const hintText = $('hintText');
+            const particleContainer = $('particleContainer');
 
             // ===== ФОН =====
             function initParticles() {
@@ -1044,23 +1052,27 @@
                 const ctx = canvas.getContext('2d');
                 let w, h;
                 const particles = [];
-                const COUNT = 50;
-                function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+                const COUNT = 35;
+
+                function resize() { w = canvas.width = window.innerWidth;
+                    h = canvas.height = window.innerHeight; }
                 window.addEventListener('resize', resize);
                 resize();
+
                 class Particle {
                     constructor() { this.reset(); }
                     reset() {
                         this.x = Math.random() * w;
                         this.y = Math.random() * h;
-                        this.size = Math.random() * 5 + 2;
-                        this.speedX = (Math.random() - 0.5) * 0.3;
-                        this.speedY = (Math.random() - 0.5) * 0.3;
-                        this.opacity = Math.random() * 0.25 + 0.05;
+                        this.size = Math.random() * 3 + 1.5;
+                        this.speedX = (Math.random() - 0.5) * 0.25;
+                        this.speedY = (Math.random() - 0.5) * 0.25;
+                        this.opacity = Math.random() * 0.2 + 0.05;
                         this.color = `hsla(${Math.random() * 60 + 200}, 70%, 70%, `;
                     }
                     update() {
-                        this.x += this.speedX; this.y += this.speedY;
+                        this.x += this.speedX;
+                        this.y += this.speedY;
                         if (this.x < 0 || this.x > w) this.speedX *= -1;
                         if (this.y < 0 || this.y > h) this.speedY *= -1;
                     }
@@ -1069,16 +1081,18 @@
                         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                         ctx.fillStyle = this.color + this.opacity + ')';
                         ctx.fill();
-                        ctx.shadowColor = this.color + '0.2)';
-                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = this.color + '0.15)';
+                        ctx.shadowBlur = 8;
                         ctx.fill();
                         ctx.shadowBlur = 0;
                     }
                 }
                 for (let i = 0; i < COUNT; i++) particles.push(new Particle());
+
                 function animate() {
                     ctx.clearRect(0, 0, w, h);
-                    particles.forEach(p => { p.update(); p.draw(); });
+                    particles.forEach(p => { p.update();
+                        p.draw(); });
                     requestAnimationFrame(animate);
                 }
                 animate();
@@ -1087,8 +1101,10 @@
 
             // ===== ЗВУКИ =====
             let audioCtx = null;
+
             function initAudio() { if (!audioCtx) audioCtx = new(window.AudioContext || window.webkitAudioContext)(); }
-            function playSound(freq, duration, type = 'sine', volume = 0.2) {
+
+            function playSound(freq, duration, type = 'sine', volume = 0.18) {
                 if (!settings.sound) return;
                 try {
                     initAudio();
@@ -1104,14 +1120,28 @@
                     osc.stop(audioCtx.currentTime + duration);
                 } catch (e) {}
             }
-            function playClickSound() { playSound(800, 0.05, 'sine', 0.1); }
-            function playMergeSound() { playSound(523, 0.12, 'sine', 0.25); setTimeout(() => playSound(659, 0.1, 'sine', 0.2), 80); }
-            function playGameOverSound() { playSound(440, 0.3, 'sawtooth', 0.15); setTimeout(() => playSound(349, 0.4, 'sawtooth', 0.12), 200); }
-            function playWinSound() { playSound(523, 0.1, 'square', 0.15); setTimeout(() => playSound(659, 0.1, 'square', 0.15), 100); setTimeout(() => playSound(784, 0.2, 'square', 0.15), 200); }
-            function playCoinSound() { playSound(1200, 0.08, 'sine', 0.15); setTimeout(() => playSound(1500, 0.08, 'sine', 0.12), 60); }
-            function playAchievementSound() { playSound(880, 0.1, 'square', 0.15); setTimeout(() => playSound(1100, 0.1, 'square', 0.15), 120); setTimeout(() => playSound(1320, 0.15, 'square', 0.15), 240); }
 
-            function vibrate(duration = 20) { if (!settings.vibration) return; try { if (navigator.vibrate) navigator.vibrate(duration); } catch (e) {} }
+            function playClickSound() { playSound(800, 0.04, 'sine', 0.08); }
+
+            function playMergeSound() { playSound(523, 0.1, 'sine', 0.2);
+                setTimeout(() => playSound(659, 0.08, 'sine', 0.15), 60); }
+
+            function playGameOverSound() { playSound(440, 0.25, 'sawtooth', 0.12);
+                setTimeout(() => playSound(349, 0.3, 'sawtooth', 0.1), 180); }
+
+            function playWinSound() { playSound(523, 0.08, 'square', 0.12);
+                setTimeout(() => playSound(659, 0.08, 'square', 0.12), 80);
+                setTimeout(() => playSound(784, 0.15, 'square', 0.12), 160); }
+
+            function playCoinSound() { playSound(1200, 0.06, 'sine', 0.12);
+                setTimeout(() => playSound(1500, 0.06, 'sine', 0.1), 50); }
+
+            function playAchievementSound() { playSound(880, 0.08, 'square', 0.12);
+                setTimeout(() => playSound(1100, 0.08, 'square', 0.12), 100);
+                setTimeout(() => playSound(1320, 0.12, 'square', 0.12), 200); }
+
+            function vibrate(duration = 15) { if (!settings.vibration) return;
+                try { if (navigator.vibrate) navigator.vibrate(duration); } catch (e) {} }
 
             // ===== UI =====
             function applyUITheme(theme) {
@@ -1134,16 +1164,16 @@
             function setTileTheme(theme) {
                 tileTheme = theme;
                 localStorage.setItem(STORAGE.EQUIPPED, theme);
-                if (pages.game.classList.contains('active')) renderTiles(false);
+                if (document.getElementById('pageGame').classList.contains('active')) renderTiles(false);
             }
 
-            // ===== ТОСТЫ, МОНЕТЫ =====
+            // ===== ТОСТЫ =====
             function showToast(text, type = '') {
                 const toast = document.createElement('div');
                 toast.className = 'toast' + (type ? ' ' + type : '');
                 toast.textContent = text;
                 document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 2000);
+                setTimeout(() => toast.remove(), 1600);
             }
 
             function updateCoinsDisplay() {
@@ -1161,13 +1191,13 @@
                 updateCoinsDisplay();
                 if (amount > 0) {
                     playCoinSound();
-                    showToast(`+${amount} 🪙${from ? ' (' + from + ')' : ''}`, 'toast-gold');
+                    showToast(`+${amount} 🪙`, 'toast-gold');
                 }
             }
 
             function spendCoins(amount, reason = '') {
                 if (coins < amount) {
-                    showToast(`Недостаточно монет! Нужно ${amount} 🪙`, 'toast-error');
+                    showToast(`Недостаточно монет! ${amount} 🪙`, 'toast-error');
                     return false;
                 }
                 coins -= amount;
@@ -1183,288 +1213,6 @@
                 if (earned > 0) {
                     addCoins(earned, 'за очки');
                     lastCoinThreshold = newThreshold;
-                }
-            }
-
-            // ===== ДОСТИЖЕНИЯ =====
-            function checkAchievements(extraData = {}) {
-                let anyNew = false;
-                const { sprintScore, noMergeCount: nmc, comboCount: cc, finalScore, totalThemes } = extraData;
-                ACHIEVEMENTS_LIST.forEach(a => {
-                    if (achievements[a.id]) return;
-                    let checkValue = 0;
-                    switch (a.id) {
-                        case 'score_100': case 'tile_128': case 'tile_512': case 'tile_2048': case 'five_2048': case 'master_4096': checkValue = score; break;
-                        case 'games_10': checkValue = stats.games || 0; break;
-                        case 'sprinter': checkValue = sprintScore || 0; break;
-                        case 'survivor': checkValue = nmc || noMergeCount || 0; break;
-                        case 'combo_master': checkValue = cc || comboCount || 0; break;
-                        case 'precise': checkValue = finalScore || score || 0; break;
-                        case 'collector': checkValue = totalThemes || ownedItems.filter(i => SHOP_ITEMS.find(s => s.id === i && s.type === 'tile')).length || 0; break;
-                        default: checkValue = 0;
-                    }
-                    if (a.check(checkValue)) {
-                        achievements[a.id] = true;
-                        localStorage.setItem(STORAGE.ACHIEVEMENTS, JSON.stringify(achievements));
-                        addCoins(a.reward, 'достижение: ' + a.name);
-                        anyNew = true;
-                        playAchievementSound();
-                        showToast('🏅 Достижение: ' + a.name + ' (+' + a.reward + ' 🪙)', 'toast-gold');
-                    }
-                });
-                return anyNew;
-            }
-
-            function renderAchievements() {
-                let html = '';
-                ACHIEVEMENTS_LIST.forEach(a => {
-                    const unlocked = !!achievements[a.id];
-                    html += `<div class="achievement-item ${unlocked ? 'unlocked' : ''}">
-                        <div class="achievement-item-info">
-                            <div class="achievement-item-name">${unlocked ? '✅' : '🔒'} ${a.name}</div>
-                            <div class="achievement-item-desc">${a.desc} (+${a.reward} 🪙)</div>
-                        </div>
-                        <div class="achievement-status">${unlocked ? '🏅' : '⬜'}</div>
-                    </div>`;
-                });
-                achievementGrid.innerHTML = html;
-            }
-
-            // ===== СТАТИСТИКА =====
-            function renderStats() {
-                const data = [
-                    { label: 'Всего игр', value: stats.games || 0 },
-                    { label: 'Макс. счёт', value: stats.maxScore || 0 },
-                    { label: 'Макс. плитка', value: stats.maxTile || 0 },
-                    { label: 'Всего очков', value: stats.totalScore || 0 },
-                    { label: 'Всего монет', value: stats.totalCoins || 0 },
-                    { label: 'Макс. комбо', value: maxCombo || 0 },
-                ];
-                let html = '';
-                data.forEach(d => {
-                    html += `<div class="stat-item"><div class="stat-value">${d.value}</div><div class="stat-label">${d.label}</div></div>`;
-                });
-                statGrid.innerHTML = html;
-            }
-
-            // ===== БОНУС =====
-            function getBonusAmount(day) {
-                const amounts = [0, 1, 3, 5, 7, 10, 12, 15];
-                if (day < 1) return 1;
-                if (day > 7) return 15;
-                return amounts[day] || 1;
-            }
-
-            function claimBonus() {
-                const now = Date.now();
-                const dayMs = 86400000;
-                const lastClaim = bonusData.lastClaim || 0;
-                if (now - lastClaim < dayMs) {
-                    const remaining = Math.ceil((dayMs - (now - lastClaim)) / 3600000);
-                    showToast(`⏳ Бонус через ${remaining} ч`, 'toast-error');
-                    return;
-                }
-                let day = (bonusData.day || 0) + 1;
-                if (day > 7) day = 1;
-                bonusData.day = day;
-                bonusData.lastClaim = now;
-                if (!bonusData.startTime) bonusData.startTime = now;
-                localStorage.setItem(STORAGE.BONUS, JSON.stringify(bonusData));
-                const amount = getBonusAmount(day);
-                addCoins(amount, 'ежедневный бонус (день ' + day + ')');
-                showToast(`🎁 Бонус дня ${day}: +${amount} 🪙`, 'toast-gold');
-                updateMenuBonusDisplay();
-            }
-
-            function updateMenuBonusDisplay() {
-                const now = Date.now();
-                const dayMs = 86400000;
-                const lastClaim = bonusData.lastClaim || 0;
-                const day = bonusData.day || 0;
-                const btn = document.getElementById('menuBonus');
-                if (now - lastClaim < dayMs) {
-                    const remaining = Math.ceil((dayMs - (now - lastClaim)) / 3600000);
-                    btn.textContent = `⏳ Бонус через ${remaining} ч (день ${day})`;
-                } else {
-                    const nextDay = day >= 7 ? 1 : day + 1;
-                    const amount = getBonusAmount(nextDay);
-                    btn.textContent = `🎁 Забрать бонус (день ${nextDay}, ${amount} 🪙)`;
-                }
-            }
-
-            // ===== ЛИДЕРЫ =====
-            function getLeaders() { try { return JSON.parse(localStorage.getItem(STORAGE.LEADER)) || []; } catch { return []; } }
-            function saveLeaders(leaders) { localStorage.setItem(STORAGE.LEADER, JSON.stringify(leaders)); }
-            function addLeader(score) {
-                if (score === 0) return;
-                let leaders = getLeaders();
-                let name = prompt('🎉 Новый рекорд! Введите ваше имя:', 'Игрок');
-                if (!name || name.trim() === '') name = 'Игрок';
-                name = name.trim().substring(0, 20);
-                leaders.push({ name, score });
-                leaders.sort((a, b) => b.score - a.score);
-                if (leaders.length > 5) leaders = leaders.slice(0, 5);
-                saveLeaders(leaders);
-            }
-
-            function renderLeaders() {
-                const leaders = getLeaders();
-                if (leaders.length === 0) {
-                    leaderList.innerHTML = '<div class="leader-empty">Пока нет рекордов 😢<br>Станьте первым!</div>';
-                    return;
-                }
-                let html = '';
-                leaders.forEach((item, i) => {
-                    const medals = ['🥇', '🥈', '🥉'];
-                    const medal = i < 3 ? medals[i] : `${i+1}.`;
-                    html += `<div class="leader-item"><span class="pos">${medal}</span><span class="name">${item.name}</span><span class="lscore">${item.score}</span></div>`;
-                });
-                leaderList.innerHTML = html;
-            }
-
-            // ===== МАГАЗИН =====
-            function renderShop() {
-                let html = '';
-                html += `<div class="shop-item" style="border-color: #e74c3c;">
-                    <div class="shop-item-info"><div class="shop-item-name">🔄 Сбросить тему</div><div class="shop-item-desc">Вернуть стандартный вид плиток и светлую тему</div></div>
-                    <button class="shop-btn reset-theme" id="resetThemeBtn">Сбросить</button>
-                </div>`;
-
-                SHOP_ITEMS.forEach(item => {
-                    if (item.type !== 'tile') return;
-                    const owned = ownedItems.includes(item.id);
-                    const isEquipped = (tileTheme === item.id);
-                    const canAfford = coins >= item.price;
-                    let btnText, btnClass = 'shop-btn', disabled = false;
-                    if (isEquipped) { btnText = '✅ Используется'; btnClass = 'shop-btn owned'; disabled = true; }
-                    else if (owned) { btnText = 'Использовать'; btnClass = 'shop-btn'; }
-                    else { btnText = `Купить (${item.price}🪙)`;
-                        btnClass = 'shop-btn';
-                        disabled = !canAfford; }
-                    html += `<div class="shop-item">
-                        <div class="shop-item-info"><div class="shop-item-name">${item.icon} ${item.name}</div><div class="shop-item-desc">${item.desc}</div></div>
-                        <button class="${btnClass}" data-id="${item.id}" data-type="${item.type}" ${disabled ? 'disabled' : ''}>${btnText}</button>
-                    </div>`;
-                });
-
-                const darkOwned = ownedItems.includes('dark');
-                const isDarkEquipped = (uiTheme === 'dark');
-                html += `<div class="shop-item">
-                    <div class="shop-item-info"><div class="shop-item-name">🌙 Тёмная тема</div><div class="shop-item-desc">Интерфейс в тёмных тонах (20 🪙)</div></div>
-                    <button class="shop-btn ${isDarkEquipped ? 'owned' : ''}" id="darkThemeBtn" ${isDarkEquipped ? 'disabled' : ''}>
-                        ${isDarkEquipped ? '✅ Используется' : (darkOwned ? 'Использовать' : 'Купить (20🪙)')}
-                    </button>
-                </div>`;
-
-                html += `<div style="margin-top:10px; font-size:13px; opacity:0.6; text-align:left;">🖼️ Скины фона:</div>`;
-                BG_SKINS.forEach(skin => {
-                    const owned = ownedBgSkins.includes(skin.id);
-                    const isEquipped = (bgSkin === skin.id);
-                    const canAfford = coins >= skin.price;
-                    let btnText, btnClass = 'shop-btn', disabled = false;
-                    if (skin.price === 0) { btnText = '✅ Бесплатно';
-                        btnClass = 'shop-btn owned';
-                        disabled = true; } else if (isEquipped) { btnText = '✅ Используется';
-                        btnClass = 'shop-btn owned';
-                        disabled = true; } else if (owned) { btnText = 'Использовать';
-                        btnClass = 'shop-btn'; } else { btnText = `Купить (${skin.price}🪙)`;
-                        btnClass = 'shop-btn';
-                        disabled = !canAfford; }
-                    html += `<div class="shop-item">
-                        <div class="shop-item-info"><div class="shop-item-name">${skin.icon} ${skin.name}</div><div class="shop-item-desc">${skin.desc}</div></div>
-                        <button class="${btnClass}" data-id="${skin.id}" data-type="bg" ${disabled ? 'disabled' : ''}>${btnText}</button>
-                    </div>`;
-                });
-
-                shopGrid.innerHTML = html;
-
-                document.getElementById('resetThemeBtn').addEventListener('click', function() {
-                    setTileTheme('');
-                    applyUITheme('light');
-                    renderShop();
-                    showToast('Тема сброшена на стандартную (светлую)');
-                });
-
-                document.getElementById('darkThemeBtn').addEventListener('click', function() {
-                    const owned = ownedItems.includes('dark');
-                    if (owned) { applyUITheme('dark');
-                        renderShop(); return; }
-                    if (coins < 20) { showToast('Недостаточно монет! Нужно 20 🪙', 'toast-error'); return; }
-                    if (!confirm('Купить тёмную тему за 20 монет?')) return;
-                    spendCoins(20);
-                    ownedItems.push('dark');
-                    localStorage.setItem(STORAGE.OWNED, JSON.stringify(ownedItems));
-                    applyUITheme('dark');
-                    renderShop();
-                    updateCoinsDisplay();
-                });
-
-                shopGrid.querySelectorAll('.shop-btn:not(.reset-theme)').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        const id = this.dataset.id;
-                        const type = this.dataset.type;
-                        if (!id || !type) return;
-                        if (type === 'tile') {
-                            const item = SHOP_ITEMS.find(i => i.id === id);
-                            if (!item) return;
-                            const owned = ownedItems.includes(id);
-                            if (owned && tileTheme !== id) { setTileTheme(id);
-                                renderShop(); return; }
-                            if (!owned) {
-                                if (coins < item.price) { showToast('Недостаточно монет!', 'toast-error'); return; }
-                                if (!confirm(`Купить "${item.name}" за ${item.price} монет?`)) return;
-                                spendCoins(item.price);
-                                ownedItems.push(id);
-                                localStorage.setItem(STORAGE.OWNED, JSON.stringify(ownedItems));
-                                setTileTheme(id);
-                                renderShop();
-                                updateCoinsDisplay();
-                                checkAchievements({ totalThemes: ownedItems.filter(i => SHOP_ITEMS.find(s => s.id === i && s.type === 'tile')).length });
-                            }
-                        }
-                        if (type === 'bg') {
-                            const skin = BG_SKINS.find(s => s.id === id);
-                            if (!skin) return;
-                            const owned = ownedBgSkins.includes(id);
-                            if (owned && bgSkin !== id) { applyBgSkin(id);
-                                renderShop(); return; }
-                            if (!owned && skin.price > 0) {
-                                if (coins < skin.price) { showToast('Недостаточно монет!', 'toast-error'); return; }
-                                if (!confirm(`Купить "${skin.name}" за ${skin.price} монет?`)) return;
-                                spendCoins(skin.price);
-                                ownedBgSkins.push(id);
-                                localStorage.setItem(STORAGE.BG_SKINS, JSON.stringify(ownedBgSkins));
-                                applyBgSkin(id);
-                                renderShop();
-                                updateCoinsDisplay();
-                            }
-                        }
-                    });
-                });
-            }
-
-            // ===== ЭФФЕКТ ВЗРЫВА (ЗОЛОТЫЕ ИСКРЫ) =====
-            function spawnExplosion(x, y, count = 20) {
-                const container = particleContainer;
-                const colors = ['#ffd700', '#ffaa00', '#ffcc44', '#ffe066', '#ffdd55'];
-                for (let i = 0; i < count; i++) {
-                    const p = document.createElement('div');
-                    p.className = 'particle';
-                    const angle = Math.random() * Math.PI * 2;
-                    const dist = 30 + Math.random() * 70;
-                    const tx = Math.cos(angle) * dist;
-                    const ty = Math.sin(angle) * dist - 20;
-                    const size = 4 + Math.random() * 8;
-                    p.style.cssText = `
-                        left: ${x}px; top: ${y}px;
-                        --tx: ${tx}px; --ty: ${ty}px;
-                        width: ${size}px; height: ${size}px;
-                        background: ${colors[Math.floor(Math.random() * colors.length)]};
-                        border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
-                        box-shadow: 0 0 ${size}px rgba(255,215,0,0.4);
-                    `;
-                    container.appendChild(p);
-                    setTimeout(() => p.remove(), 700);
                 }
             }
 
@@ -1522,8 +1270,6 @@
                     if (timerInterval) { clearInterval(timerInterval);
                         timerInterval = null; }
                 }
-                const tileThemesOwned = ownedItems.filter(i => SHOP_ITEMS.find(s => s.id === i && s.type === 'tile')).length;
-                checkAchievements({ totalThemes: tileThemesOwned });
             }
 
             function renderBackground() {
@@ -1540,8 +1286,8 @@
             function getTileSize() {
                 const rect = gridWrapper.getBoundingClientRect();
                 const size = getSize();
-                const padding = window.innerWidth <= 500 ? 4.9 : 7.8;
-                const gap = window.innerWidth <= 500 ? 4.9 : 7.8;
+                const padding = 5;
+                const gap = 5;
                 const totalGap = gap * (size - 1);
                 const avail = rect.width - padding * 2;
                 return (avail - totalGap) / size;
@@ -1550,8 +1296,8 @@
             function renderTiles(animate = false) {
                 document.querySelectorAll('.tile').forEach(el => el.remove());
                 const size = getSize();
-                const padding = window.innerWidth <= 500 ? 4.9 : 7.8;
-                const gap = window.innerWidth <= 500 ? 4.9 : 7.8;
+                const padding = 5;
+                const gap = 5;
                 const tileSize = getTileSize();
 
                 for (let r = 0; r < size; r++) {
@@ -1570,7 +1316,7 @@
                         tile.style.height = tileSize + 'px';
                         tile.style.left = left + 'px';
                         tile.style.top = top + 'px';
-                        if (val < 1024) tile.style.fontSize = (tileSize * 0.48) + 'px';
+                        if (val < 1024) tile.style.fontSize = (tileSize * 0.46) + 'px';
                         else if (val < 8192) tile.style.fontSize = (tileSize * 0.36) + 'px';
                         else tile.style.fontSize = (tileSize * 0.28) + 'px';
                         gridWrapper.appendChild(tile);
@@ -1585,7 +1331,6 @@
                 bestScoreEl.textContent = bestScore;
                 checkCoinReward(score);
                 updateHint();
-                checkAchievements();
             }
 
             function pushHistory() {
@@ -1601,7 +1346,8 @@
             function undo() {
                 if (currentHistoryIndex <= 0 || isMoving) return;
                 if (undoData.free > 0) { undoData.free--;
-                    localStorage.setItem(STORAGE.UNDO, JSON.stringify(undoData)); } else { if (!spendCoins(UNDO_PRICE, 'за отмену хода')) return; }
+                    localStorage.setItem(STORAGE.UNDO, JSON.stringify(undoData)); } else { if (!spendCoins(UNDO_PRICE,
+                        'за отмену')) return; }
                 currentHistoryIndex--;
                 const state = history[currentHistoryIndex];
                 if (!state) return;
@@ -1718,7 +1464,7 @@
                 if (moved) {
                     moveCount++;
                     playClickSound();
-                    vibrate(10);
+                    vibrate(8);
 
                     if (anyMerged) {
                         noMergeCount = 0;
@@ -1726,17 +1472,16 @@
                         if (comboCount > maxCombo) maxCombo = comboCount;
                         if (comboCount >= 3) {
                             showCombo(comboCount);
-                            checkAchievements({ comboCount: comboCount });
                         }
                         const rect = gridWrapper.getBoundingClientRect();
                         const cx = rect.left + rect.width / 2;
                         const cy = rect.top + rect.height / 2;
-                        spawnExplosion(cx, cy, 15 + comboCount * 3);
+                        spawnExplosion(cx, cy, 12 + comboCount * 2);
                         playMergeSound();
                         if (totalAdded >= 2048) playWinSound();
                     } else {
                         noMergeCount++;
-                        if (noMergeCount >= 50) checkAchievements({ noMergeCount: noMergeCount });
+                        if (noMergeCount >= 50) {}
                         comboCount = 0;
                         hideCombo();
                     }
@@ -1748,7 +1493,6 @@
                     if (maxTile > stats.maxTile) stats.maxTile = maxTile;
                     localStorage.setItem(STORAGE.STATS, JSON.stringify(stats));
 
-                    checkAchievements();
                     spawnTile();
                     pushHistory();
                     renderTiles(true);
@@ -1774,7 +1518,7 @@
             function showCombo(count) {
                 comboDisplay.textContent = `🔥 x${count}`;
                 comboDisplay.className = 'combo-display show';
-                setTimeout(() => { comboDisplay.className = 'combo-display'; }, 800);
+                setTimeout(() => { comboDisplay.className = 'combo-display'; }, 700);
             }
 
             function hideCombo() { comboDisplay.className = 'combo-display'; }
@@ -1799,27 +1543,56 @@
             function checkGameEnd() {
                 stats.games++;
                 localStorage.setItem(STORAGE.STATS, JSON.stringify(stats));
-                if (score > 0 && score % 1000 === 0) checkAchievements({ finalScore: score });
                 if (score > 0) {
-                    const leaders = getLeaders();
+                    let leaders = [];
+                    try { leaders = JSON.parse(localStorage.getItem(STORAGE.LEADER)) || []; } catch { leaders = []; }
                     if (leaders.length < 5 || score > leaders[leaders.length - 1]?.score) {
-                        setTimeout(() => { addLeader(score);
-                            renderLeaders(); }, 400);
+                        let name = prompt('Новый рекорд! Ваше имя:', 'Игрок');
+                        if (!name || name.trim() === '') name = 'Игрок';
+                        name = name.trim().substring(0, 20);
+                        leaders.push({ name, score });
+                        leaders.sort((a, b) => b.score - a.score);
+                        if (leaders.length > 5) leaders = leaders.slice(0, 5);
+                        localStorage.setItem(STORAGE.LEADER, JSON.stringify(leaders));
                     }
                 }
-                checkAchievements();
+            }
+
+            // ===== ЭФФЕКТ ВЗРЫВА =====
+            function spawnExplosion(x, y, count = 15) {
+                const container = particleContainer;
+                const colors = ['#ffd700', '#ffaa00', '#ffcc44', '#ffe066', '#ffdd55'];
+                for (let i = 0; i < count; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'particle';
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = 25 + Math.random() * 55;
+                    const tx = Math.cos(angle) * dist;
+                    const ty = Math.sin(angle) * dist - 15;
+                    const size = 3 + Math.random() * 6;
+                    p.style.cssText = `
+                        left: ${x}px; top: ${y}px;
+                        --tx: ${tx}px; --ty: ${ty}px;
+                        width: ${size}px; height: ${size}px;
+                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+                        box-shadow: 0 0 ${size}px rgba(255,215,0,0.35);
+                    `;
+                    container.appendChild(p);
+                    setTimeout(() => p.remove(), 550);
+                }
             }
 
             // ===== ПОДСКАЗКИ =====
             function getHint() {
-                if (gameOver || !gameActive) { showToast('Игра окончена или не активна', 'toast-error'); return; }
+                if (gameOver || !gameActive) { showToast('Игра окончена', 'toast-error'); return; }
                 if (hintData.free > 0) {
                     hintData.free--;
                     localStorage.setItem(STORAGE.HINTS, JSON.stringify(hintData));
-                    showToast(`💡 Подсказка (осталось ${hintData.free} бесплатных)`, 'toast-gold');
+                    showToast(`💡 Подсказка (осталось ${hintData.free})`, 'toast-gold');
                 } else {
                     if (!spendCoins(HINT_PRICE, 'за подсказку')) return;
-                    showToast(`💡 Подсказка куплена за ${HINT_PRICE} 🪙`, 'toast-gold');
+                    showToast(`💡 Подсказка куплена`, 'toast-gold');
                 }
                 const size = getSize();
                 for (let r = 0; r < size; r++) {
@@ -1832,56 +1605,138 @@
                             highlightTile(r + 1, c); return; }
                     }
                 }
-                showToast('Нет доступных слияний 🤔', 'toast-error');
+                showToast('Нет доступных слияний', 'toast-error');
             }
 
             function highlightTile(r, c) {
                 const tiles = document.querySelectorAll('.tile');
                 const size = getSize();
-                const padding = window.innerWidth <= 500 ? 4.9 : 7.8;
-                const gap = window.innerWidth <= 500 ? 4.9 : 7.8;
+                const padding = 5;
+                const gap = 5;
                 const tileSize = getTileSize();
                 tiles.forEach(t => {
                     const left = padding + c * (tileSize + gap);
                     const top = padding + r * (tileSize + gap);
                     if (parseInt(t.style.left) === left && parseInt(t.style.top) === top) {
-                        t.style.boxShadow = '0 0 30px #ffd700';
+                        t.style.boxShadow = '0 0 25px #ffd700';
                         t.style.transition = 'box-shadow 0.3s';
-                        setTimeout(() => { t.style.boxShadow = 'none'; }, 1500);
+                        setTimeout(() => { t.style.boxShadow = 'none'; }, 1300);
                     }
                 });
             }
 
             function updateHint() {
-                if (gameOver) { hintText.textContent = '💥 Игра окончена! Начни новую, чтобы попробовать снова.'; return; }
+                if (gameOver) { hintText.textContent = '💥 Игра окончена! Начни новую.'; return; }
                 const size = getSize();
                 const flat = grid.flat();
                 const emptyCells = flat.filter(v => v === 0).length;
                 const maxTile = Math.max(...flat, 0);
-                if (score === 0 && emptyCells === size * size - 2) hintText.textContent = 'Соединяй одинаковые плитки, чтобы получить 2048!';
-                else if (score < 100) hintText.textContent = 'Начинай с малого! Соединяй двойки и четвёрки.';
-                else if (score < 500) hintText.textContent = 'Хороший темп! Старайся держать большие числа в углу.';
-                else if (score < 1000) hintText.textContent = 'Ты на полпути к 2048! Продолжай в том же духе!';
-                else if (score < 2000) hintText.textContent = '🔥 Ты близко! Осталось совсем немного!';
-                else if (maxTile >= 2048) hintText.textContent = '🎉 ТЫ ПОБЕДИЛ! Собери 4096, чтобы побить рекорд!';
-                else if (emptyCells < 4 && !gameOver) hintText.textContent = '⚠️ Осторожно! Поле почти заполнено. Планируй ходы!';
+                if (score === 0 && emptyCells === size * size - 2) hintText.textContent = 'Соединяй одинаковые плитки!';
+                else if (score < 100) hintText.textContent = 'Начинай с малого!';
+                else if (score < 500) hintText.textContent = 'Держи большие числа в углу.';
+                else if (score < 1000) hintText.textContent = 'Ты на полпути к 2048!';
+                else if (score < 2000) hintText.textContent = '🔥 Ты близко!';
+                else if (maxTile >= 2048) hintText.textContent = '🎉 ТЫ ПОБЕДИЛ! Собери 4096!';
+                else if (emptyCells < 4 && !gameOver) hintText.textContent = '⚠️ Поле почти заполнено!';
                 else {
-                    const hints = ['Думай на несколько ходов вперёд!', 'Старайся не двигать большие числа с места.',
-                        'Держи самые большие числа в одном углу.', 'Используй весь экран, не зажимайся в одном месте.',
-                        'Каждый ход приближает тебя к 2048!'
+                    const hints = ['Думай на несколько ходов вперёд!', 'Не двигай большие числа с места.',
+                        'Держи самые большие числа в одном углу.'
                     ];
                     hintText.textContent = hints[Math.floor(Math.random() * hints.length)];
                 }
             }
 
+            // ============================================================
+            // НАВИГАЦИЯ
+            // ============================================================
+            function showPage(name) {
+                const pages = ['pageMenu', 'pageGame', 'pageShop', 'pageAchievements', 'pageStats', 'pageSettings'];
+                pages.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.toggle('active', id === name);
+                });
+                updateCoinsDisplay();
+                if (name === 'pageGame') {
+                    if (!grid.length) initGrid();
+                    setTimeout(() => { renderTiles(false);
+                        updateHint(); }, 30);
+                }
+                if (name === 'pageMenu') {
+                    renderLeaders();
+                    updateMenuBonusDisplay();
+                }
+            }
+
+            // ===== ЛИДЕРЫ =====
+            function renderLeaders() {
+                let leaders = [];
+                try { leaders = JSON.parse(localStorage.getItem(STORAGE.LEADER)) || []; } catch { leaders = []; }
+                if (leaders.length === 0) {
+                    leaderList.innerHTML = '<div class="leader-empty">Пока нет рекордов 😢</div>';
+                    return;
+                }
+                let html = '';
+                leaders.forEach((item, i) => {
+                    const medals = ['🥇', '🥈', '🥉'];
+                    const medal = i < 3 ? medals[i] : `${i+1}.`;
+                    html += `<div class="leader-item"><span class="pos">${medal}</span><span class="name">${item.name}</span><span class="lscore">${item.score}</span></div>`;
+                });
+                leaderList.innerHTML = html;
+            }
+
+            // ===== БОНУС =====
+            function getBonusAmount(day) {
+                const amounts = [0, 1, 3, 5, 7, 10, 12, 15];
+                if (day < 1) return 1;
+                if (day > 7) return 15;
+                return amounts[day] || 1;
+            }
+
+            function claimBonus() {
+                const now = Date.now();
+                const dayMs = 86400000;
+                const lastClaim = bonusData.lastClaim || 0;
+                if (now - lastClaim < dayMs) {
+                    const remaining = Math.ceil((dayMs - (now - lastClaim)) / 3600000);
+                    showToast(`⏳ Бонус через ${remaining} ч`, 'toast-error');
+                    return;
+                }
+                let day = (bonusData.day || 0) + 1;
+                if (day > 7) day = 1;
+                bonusData.day = day;
+                bonusData.lastClaim = now;
+                if (!bonusData.startTime) bonusData.startTime = now;
+                localStorage.setItem(STORAGE.BONUS, JSON.stringify(bonusData));
+                const amount = getBonusAmount(day);
+                addCoins(amount, 'бонус');
+                showToast(`🎁 Бонус дня ${day}: +${amount} 🪙`, 'toast-gold');
+                updateMenuBonusDisplay();
+            }
+
+            function updateMenuBonusDisplay() {
+                const now = Date.now();
+                const dayMs = 86400000;
+                const lastClaim = bonusData.lastClaim || 0;
+                const day = bonusData.day || 0;
+                const btn = document.getElementById('menuBonus');
+                if (now - lastClaim < dayMs) {
+                    const remaining = Math.ceil((dayMs - (now - lastClaim)) / 3600000);
+                    btn.textContent = `⏳ Бонус через ${remaining} ч (день ${day})`;
+                } else {
+                    const nextDay = day >= 7 ? 1 : day + 1;
+                    const amount = getBonusAmount(nextDay);
+                    btn.textContent = `🎁 Забрать бонус (день ${nextDay}, ${amount} 🪙)`;
+                }
+            }
+
             // ===== ОБУЧЕНИЕ =====
             const tutorialSteps = [
-                { title: '🎓 Добро пожаловать!', text: 'Соединяй одинаковые плитки, чтобы получить 2048. Используй стрелки или свайпы для управления.' },
-                { title: '🔄 Слияние', text: 'Когда две одинаковые плитки сталкиваются, они сливаются в одну с удвоенным значением. Например, 2+2=4.' },
-                { title: '🎯 Цель', text: 'Твоя цель — собрать плитку 2048. Но игра не заканчивается — можно собирать 4096, 8192 и дальше!' },
-                { title: '🪙 Монеты', text: 'За каждую 1000 очков ты получаешь 10 монет. Монеты можно тратить в магазине на темы, скины и эффекты.' },
-                { title: '🏅 Достижения', text: 'Выполняй сложные задания и получай монеты. Попробуй собрать 4096 или сделать 50 ходов без слияния!' },
-                { title: '🎮 Удачи!', text: 'Теперь ты готов! Играй, зарабатывай монеты и становись лучшим в таблице лидеров! 🚀' },
+                { title: '🎓 Добро пожаловать!', text: 'Соединяй одинаковые плитки, чтобы получить 2048.' },
+                { title: '🔄 Слияние', text: 'Две одинаковые плитки сливаются в одну с удвоенным значением.' },
+                { title: '🎯 Цель', text: 'Твоя цель — собрать плитку 2048.' },
+                { title: '🪙 Монеты', text: 'За каждую 1000 очков ты получаешь 10 монет.' },
+                { title: '🏅 Достижения', text: 'Выполняй задания и получай монеты.' },
+                { title: '🎮 Удачи!', text: 'Играй и становись лучшим в таблице лидеров!' },
             ];
             let tutorialStep = 0;
 
@@ -1912,91 +1767,48 @@
                 tutorialShown = true;
             });
 
-            // ===== НАСТРОЙКИ =====
-            function renderSettings() {
-                let html = '';
-                html += `<div class="settings-item"><span class="settings-item-label">🔊 Звук</span><div class="settings-item-control">
-                    <button class="settings-btn ${settings.sound ? 'active' : ''}" data-setting="sound" data-value="true">Вкл</button>
-                    <button class="settings-btn ${!settings.sound ? 'active' : ''}" data-setting="sound" data-value="false">Выкл</button>
-                </div></div>`;
-                html += `<div class="settings-item"><span class="settings-item-label">📳 Вибрация</span><div class="settings-item-control">
-                    <button class="settings-btn ${settings.vibration ? 'active' : ''}" data-setting="vibration" data-value="true">Вкл</button>
-                    <button class="settings-btn ${!settings.vibration ? 'active' : ''}" data-setting="vibration" data-value="false">Выкл</button>
-                </div></div>`;
-                html += `<div class="settings-item"><span class="settings-item-label">🎯 Сложность</span><div class="settings-item-control">
-                    <button class="settings-btn ${settings.difficulty === 'easy' ? 'active' : ''}" data-setting="difficulty" data-value="easy">Легко</button>
-                    <button class="settings-btn ${settings.difficulty === 'medium' ? 'active' : ''}" data-setting="difficulty" data-value="medium">Средне</button>
-                    <button class="settings-btn ${settings.difficulty === 'hard' ? 'active' : ''}" data-setting="difficulty" data-value="hard">Сложно</button>
-                </div></div>`;
-                settingsGrid.innerHTML = html;
-                settingsGrid.querySelectorAll('.settings-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const setting = this.dataset.setting;
-                        const value = this.dataset.value;
-                        if (setting === 'sound') settings.sound = value === 'true';
-                        else if (setting === 'vibration') settings.vibration = value === 'true';
-                        else if (setting === 'difficulty') settings.difficulty = value;
-                        localStorage.setItem(STORAGE.SETTINGS, JSON.stringify(settings));
-                        renderSettings();
-                    });
-                });
-            }
-
-            // ===== ПОЛНЫЙ ЭКРАН =====
+            // ============================================================
+            // ПОЛНЫЙ ЭКРАН
+            // ============================================================
             function toggleFullscreen() {
                 if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(() => {}); } else { if (
                         document.exitFullscreen) document.exitFullscreen(); }
             }
 
-            // ===== ПОДЕЛИТЬСЯ =====
+            // ============================================================
+            // ПОДЕЛИТЬСЯ
+            // ============================================================
             function shareResult() {
-                const text =
-                    `🎮 2048\n🏆 Счёт: ${score}\n🪙 Монет: ${coins}\n${gameOver ? '💥 Игра окончена!' : '🔥 Игра продолжается!'}\n#2048 #game`;
+                const text = `🎮 2048\n🏆 Счёт: ${score}\n🪙 Монет: ${coins}\n${gameOver ? '💥 Игра окончена!' : '🔥 Игра продолжается!'}`;
                 if (navigator.share) { navigator.share({ title: 'Мой результат в 2048', text: text }).catch(() => {}); } else {
                     navigator.clipboard.writeText(text).then(() => {
-                        showToast('📤 Результат скопирован в буфер!', 'toast-gold');
+                        showToast('📤 Результат скопирован!', 'toast-gold');
                     }).catch(() => { prompt('Скопируй текст:', text); });
                 }
             }
 
-            // ===== НАВИГАЦИЯ =====
-            function showPage(name) {
-                Object.keys(pages).forEach(key => { pages[key].classList.toggle('active', key === name); });
-                updateCoinsDisplay();
-                if (name === 'shop') renderShop();
-                if (name === 'game') {
-                    if (!grid.length) initGrid();
-                    setTimeout(() => { renderTiles(false);
-                        updateHint(); }, 50);
-                }
-                if (name === 'menu') { renderLeaders();
-                    updateMenuBonusDisplay(); }
-                if (name === 'achievements') renderAchievements();
-                if (name === 'stats') renderStats();
-                if (name === 'settings') renderSettings();
-                if (name === 'game' && !tutorialShown) setTimeout(startTutorial, 500);
-            }
-
-            // ===== ОБРАБОТЧИКИ =====
-            document.getElementById('menuPlay').addEventListener('click', () => { if (!grid.length || currentMode !== 'classic')
-                    initGrid();
-                showPage('game'); });
-            document.getElementById('menuShop').addEventListener('click', () => showPage('shop'));
-            document.getElementById('menuAchievements').addEventListener('click', () => showPage('achievements'));
-            document.getElementById('menuStats').addEventListener('click', () => showPage('stats'));
+            // ============================================================
+            // ОБРАБОТЧИКИ
+            // ============================================================
+            document.getElementById('menuPlay').addEventListener('click', () => { if (!grid.length || currentMode !==
+                    'classic') initGrid();
+                showPage('pageGame'); });
+            document.getElementById('menuShop').addEventListener('click', () => showPage('pageShop'));
+            document.getElementById('menuAchievements').addEventListener('click', () => showPage('pageAchievements'));
+            document.getElementById('menuStats').addEventListener('click', () => showPage('pageStats'));
             document.getElementById('menuBonus').addEventListener('click', claimBonus);
             document.getElementById('menuLeaders').addEventListener('click', () => { renderLeaders();
                 modalOverlay.classList.add('active'); });
-            document.getElementById('menuSettings').addEventListener('click', () => showPage('settings'));
+            document.getElementById('menuSettings').addEventListener('click', () => showPage('pageSettings'));
             document.getElementById('menuTutorial').addEventListener('click', startTutorial);
             document.getElementById('menuFullscreen').addEventListener('click', toggleFullscreen);
 
             document.getElementById('gameBack').addEventListener('click', () => { if (timerInterval) clearInterval(timerInterval);
-                showPage('menu'); });
-            document.getElementById('shopBack').addEventListener('click', () => showPage('menu'));
-            document.getElementById('achieveBack').addEventListener('click', () => showPage('menu'));
-            document.getElementById('statsBack').addEventListener('click', () => showPage('menu'));
-            document.getElementById('settingsBack').addEventListener('click', () => showPage('menu'));
+                showPage('pageMenu'); });
+            document.getElementById('shopBack').addEventListener('click', () => showPage('pageMenu'));
+            document.getElementById('achieveBack').addEventListener('click', () => showPage('pageMenu'));
+            document.getElementById('statsBack').addEventListener('click', () => showPage('pageMenu'));
+            document.getElementById('settingsBack').addEventListener('click', () => showPage('pageMenu'));
 
             modalClose.addEventListener('click', () => modalOverlay.classList.remove('active'));
             modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove(
@@ -2020,7 +1832,7 @@
             });
 
             resetBtn.addEventListener('click', () => {
-                if (confirm('Начать новую игру? Текущий прогресс будет потерян.')) {
+                if (confirm('Начать новую игру?')) {
                     if (timerInterval) clearInterval(timerInterval);
                     initGrid();
                 }
@@ -2031,13 +1843,17 @@
             document.addEventListener('keydown', (e) => {
                 const map = { 'ArrowLeft': 'left', 'ArrowRight': 'right', 'ArrowUp': 'up', 'ArrowDown': 'down' };
                 const dir = map[e.key];
-                if (dir && pages.game.classList.contains('active')) { e.preventDefault();
+                if (dir && document.getElementById('pageGame').classList.contains('active')) { e.preventDefault();
                     move(dir); }
-                if (e.key === 'z' && (e.ctrlKey || e.metaKey) && pages.game.classList.contains('active')) { e.preventDefault();
+                if (e.key === 'z' && (e.ctrlKey || e.metaKey) && document.getElementById('pageGame').classList.contains(
+                        'active')) { e.preventDefault();
                     undo(); }
-                if (e.key === 'h' || e.key === 'H') { if (pages.game.classList.contains('active')) getHint(); }
-                if (e.key === 'F1') { e.preventDefault(); if (pages.game.classList.contains('active')) getHint(); }
-                if (e.key === 'l' || e.key === 'L') { if (!pages.game.classList.contains('active')) { renderLeaders();
+                if (e.key === 'h' || e.key === 'H') { if (document.getElementById('pageGame').classList.contains(
+                        'active')) getHint(); }
+                if (e.key === 'F1') { e.preventDefault(); if (document.getElementById('pageGame').classList.contains(
+                        'active')) getHint(); }
+                if (e.key === 'l' || e.key === 'L') { if (!document.getElementById('pageGame').classList.contains(
+                        'active')) { renderLeaders();
                         modalOverlay.classList.add('active'); } }
                 if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); }
             });
@@ -2057,7 +1873,7 @@
                 const dy = t.clientY - touchStartY;
                 const absDx = Math.abs(dx);
                 const absDy = Math.abs(dy);
-                if (Math.max(absDx, absDy) < 20) return;
+                if (Math.max(absDx, absDy) < 15) return;
                 if (absDx > absDy) { move(dx > 0 ? 'right' : 'left'); } else { move(dy > 0 ? 'down' : 'up'); }
                 touchStartX = 0;
                 touchStartY = 0;
@@ -2066,24 +1882,22 @@
             let resizeTimeout;
             window.addEventListener('resize', () => {
                 clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(() => { if (pages.game.classList.contains('active')) renderTiles(false); },
-                100);
+                resizeTimeout = setTimeout(() => { if (document.getElementById('pageGame').classList.contains(
+                        'active')) renderTiles(false); }, 80);
             });
 
             document.addEventListener('click', initAudio, { once: true });
             document.addEventListener('touchstart', initAudio, { once: true });
 
+            // ===== СТАРТ =====
             initGrid();
             updateCoinsDisplay();
-            showPage('menu');
+            showPage('pageMenu');
             updateMenuBonusDisplay();
             setInterval(updateMenuBonusDisplay, 60000);
+            if (!tutorialShown) setTimeout(startTutorial, 600);
 
-            const tileThemesOwned = ownedItems.filter(i => SHOP_ITEMS.find(s => s.id === i && s.type === 'tile')).length;
-            checkAchievements({ totalThemes: tileThemesOwned });
-
-            if (!tutorialShown) setTimeout(startTutorial, 1000);
-
+            console.log('2048 v3.3 — Mobile optimized, bigger buttons');
         })();
     </script>
 </body>
