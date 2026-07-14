@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>2048 — Полная версия</title>
     <style>
+        /* ===== ВЕСЬ ТВОЙ СТАРЫЙ CSS (без изменений) ===== */
         :root {
             --bg: #faf8ef;
             --text: #776e65;
@@ -695,6 +696,20 @@
             margin-bottom: 9.8px;
         }
 
+        /* ===== ДОБАВЛЯЕМ СТИЛЬ ДЛЯ ПОЛЗУНКА ГРОМКОСТИ ===== */
+        .settings-item input[type="range"] {
+            width: 120px;
+            accent-color: #2563eb;
+            cursor: pointer;
+        }
+        .volume-value {
+            font-weight: bold;
+            color: #2563eb;
+            min-width: 36px;
+            text-align: center;
+            font-size: 13px;
+        }
+
         .settings-grid {
             display: flex;
             flex-direction: column;
@@ -708,6 +723,8 @@
             padding: 7.8px 11.8px;
             background: var(--shop-item-bg);
             border-radius: 8px;
+            flex-wrap: wrap;
+            gap: 6px;
         }
         .settings-item-label {
             font-weight: bold;
@@ -717,6 +734,7 @@
             display: flex;
             gap: 5.9px;
             align-items: center;
+            flex-wrap: wrap;
         }
         .settings-btn {
             padding: 3.9px 11.8px;
@@ -753,6 +771,7 @@
             .leader-item .pos { width: 27px; font-size: 13.7px; }
             .leader-item .lscore { font-size: 12.7px; }
             .combo-display { font-size: 31.4px; }
+            .settings-item input[type="range"] { width: 80px; }
         }
     </style>
 </head>
@@ -998,6 +1017,8 @@
             if (settings.sound === undefined) settings.sound = true;
             if (settings.vibration === undefined) settings.vibration = true;
             if (settings.difficulty === undefined) settings.difficulty = 'medium';
+            if (settings.music === undefined) settings.music = true;
+            if (settings.musicVolume === undefined) settings.musicVolume = 30;
 
             let tutorialShown = localStorage.getItem(STORAGE.TUTORIAL) === 'true';
 
@@ -1006,6 +1027,54 @@
             let timerInterval = null;
             let gameActive = false;
 
+            // ===== МУЗЫКА С ПОЛЗУНКОМ ГРОМКОСТИ =====
+            let musicPlayer = null;
+            let musicInitialized = false;
+
+            function initMusic() {
+                if (musicInitialized) return;
+                try {
+                    musicPlayer = new Audio('music/Ghostrifter-Official-Purple-Dream(chosic.com).mp3');
+                    musicPlayer.loop = true;
+                    musicPlayer.volume = settings.musicVolume / 100;
+                    musicPlayer.preload = 'auto';
+                    musicInitialized = true;
+                    if (settings.music) {
+                        musicPlayer.play().catch(function(e) {
+                            console.log('Music autoplay blocked:', e);
+                        });
+                    }
+                } catch (e) {
+                    console.log('Music init error:', e);
+                }
+            }
+
+            function setMusicVolume(value) {
+                settings.musicVolume = Math.min(100, Math.max(0, parseInt(value) || 0));
+                localStorage.setItem(STORAGE.SETTINGS, JSON.stringify(settings));
+                if (musicPlayer) {
+                    musicPlayer.volume = settings.musicVolume / 100;
+                }
+                // Обновляем отображение в настройках
+                const volDisplay = document.getElementById('volumeDisplay');
+                if (volDisplay) volDisplay.textContent = settings.musicVolume + '%';
+                renderSettings();
+            }
+
+            function toggleMusic() {
+                settings.music = !settings.music;
+                localStorage.setItem(STORAGE.SETTINGS, JSON.stringify(settings));
+                if (settings.music && musicPlayer) {
+                    musicPlayer.play().catch(function(e) {
+                        console.log('Music play error:', e);
+                    });
+                } else if (musicPlayer) {
+                    musicPlayer.pause();
+                }
+                renderSettings();
+            }
+
+            // ===== DOM =====
             const pages = {
                 menu: document.getElementById('pageMenu'),
                 game: document.getElementById('pageGame'),
@@ -1912,12 +1981,20 @@
                 tutorialShown = true;
             });
 
-            // ===== НАСТРОЙКИ =====
+            // ===== НАСТРОЙКИ (С ПОЛЗУНКОМ ГРОМКОСТИ) =====
             function renderSettings() {
                 let html = '';
                 html += `<div class="settings-item"><span class="settings-item-label">🔊 Звук</span><div class="settings-item-control">
                     <button class="settings-btn ${settings.sound ? 'active' : ''}" data-setting="sound" data-value="true">Вкл</button>
                     <button class="settings-btn ${!settings.sound ? 'active' : ''}" data-setting="sound" data-value="false">Выкл</button>
+                </div></div>`;
+                html += `<div class="settings-item"><span class="settings-item-label">🎵 Музыка</span><div class="settings-item-control">
+                    <button class="settings-btn ${settings.music ? 'active' : ''}" data-setting="music" data-value="true">Вкл</button>
+                    <button class="settings-btn ${!settings.music ? 'active' : ''}" data-setting="music" data-value="false">Выкл</button>
+                </div></div>`;
+                html += `<div class="settings-item"><span class="settings-item-label">🔊 Громкость музыки</span><div class="settings-item-control">
+                    <input type="range" id="musicVolumeRange" min="0" max="100" value="${settings.musicVolume}" />
+                    <span class="volume-value" id="volumeDisplay">${settings.musicVolume}%</span>
                 </div></div>`;
                 html += `<div class="settings-item"><span class="settings-item-label">📳 Вибрация</span><div class="settings-item-control">
                     <button class="settings-btn ${settings.vibration ? 'active' : ''}" data-setting="vibration" data-value="true">Вкл</button>
@@ -1929,13 +2006,39 @@
                     <button class="settings-btn ${settings.difficulty === 'hard' ? 'active' : ''}" data-setting="difficulty" data-value="hard">Сложно</button>
                 </div></div>`;
                 settingsGrid.innerHTML = html;
+
+                // Ползунок громкости
+                const volumeRange = document.getElementById('musicVolumeRange');
+                const volumeDisplay = document.getElementById('volumeDisplay');
+                if (volumeRange) {
+                    volumeRange.addEventListener('input', function() {
+                        const val = parseInt(this.value);
+                        volumeDisplay.textContent = val + '%';
+                        setMusicVolume(val);
+                    });
+                }
+
+                // Кнопки настроек
                 settingsGrid.querySelectorAll('.settings-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const setting = this.dataset.setting;
                         const value = this.dataset.value;
-                        if (setting === 'sound') settings.sound = value === 'true';
-                        else if (setting === 'vibration') settings.vibration = value === 'true';
-                        else if (setting === 'difficulty') settings.difficulty = value;
+                        if (setting === 'sound') {
+                            settings.sound = value === 'true';
+                        } else if (setting === 'music') {
+                            settings.music = value === 'true';
+                            if (settings.music && musicPlayer) {
+                                musicPlayer.play().catch(function(e) {
+                                    console.log('Music play error:', e);
+                                });
+                            } else if (musicPlayer) {
+                                musicPlayer.pause();
+                            }
+                        } else if (setting === 'vibration') {
+                            settings.vibration = value === 'true';
+                        } else if (setting === 'difficulty') {
+                            settings.difficulty = value;
+                        }
                         localStorage.setItem(STORAGE.SETTINGS, JSON.stringify(settings));
                         renderSettings();
                     });
@@ -2083,6 +2186,9 @@
             checkAchievements({ totalThemes: tileThemesOwned });
 
             if (!tutorialShown) setTimeout(startTutorial, 1000);
+
+            // ===== ЗАПУСК МУЗЫКИ =====
+            setTimeout(initMusic, 1000);
 
         })();
     </script>
