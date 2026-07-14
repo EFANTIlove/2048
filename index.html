@@ -78,9 +78,9 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 6px;
+            padding: 8px 8px 4px 8px;
             z-index: 1;
-            max-width: 529px;
+            max-width: 540px;
             margin: 0 auto;
             width: 100%;
         }
@@ -105,29 +105,29 @@
 
         /* ===== МЕНЮ ===== */
         .menu-title {
-            font-size: clamp(36px, 9vw, 70px);
+            font-size: clamp(40px, 10vw, 72px);
             font-weight: bold;
             color: var(--header-text);
             transition: color 0.3s;
             text-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
         .menu-subtitle {
-            font-size: clamp(11px, 2.2vw, 14px);
+            font-size: clamp(12px, 2.5vw, 16px);
             opacity: 0.6;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             text-align: center;
         }
         .menu-buttons {
             display: flex;
             flex-direction: column;
-            gap: 5px;
-            max-width: 240px;
+            gap: 6px;
+            max-width: 250px;
             width: 100%;
             margin: 0 auto;
         }
         .menu-btn {
-            padding: 9px;
-            font-size: clamp(13px, 2.6vw, 16px);
+            padding: 10px;
+            font-size: clamp(14px, 3vw, 18px);
             font-weight: bold;
             background: var(--btn-bg);
             color: white;
@@ -140,10 +140,10 @@
         .menu-btn:active { transform: scale(0.97); }
         .menu-btn-secondary { background: #6c5b7b; }
         .menu-btn-success { background: #27ae60; }
-        .menu-btn-small { font-size: clamp(10px, 2vw, 13px); padding: 5px; background: #5a6b7c; }
+        .menu-btn-small { font-size: clamp(12px, 2.2vw, 14px); padding: 6px; background: #5a6b7c; }
         .menu-coins {
-            font-size: clamp(12px, 2.2vw, 16px);
-            margin-top: 8px;
+            font-size: clamp(14px, 2.5vw, 18px);
+            margin-top: 10px;
             opacity: 0.8;
         }
 
@@ -153,8 +153,8 @@
             flex-direction: column;
             width: 100%;
             height: 100%;
-            justify-content: center;
-            padding: 0px 0;
+            justify-content: flex-start;
+            padding: 2px 0;
         }
 
         .header {
@@ -163,27 +163,32 @@
             align-items: center;
             margin-bottom: 2px;
             flex-wrap: wrap;
-            gap: 3px;
+            gap: 4px;
             flex-shrink: 0;
         }
         .title-block {
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
         }
         .back-btn {
             background: var(--btn-bg);
             color: white;
             border: none;
-            border-radius: 5px;
-            padding: 2px 7px;
-            font-size: clamp(13px, 2.6vw, 17px);
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: clamp(16px, 3.2vw, 22px);
             cursor: pointer;
             line-height: 1;
+            min-height: 36px;
+            min-width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .back-btn:active { transform: scale(0.95); }
         h1 {
-            font-size: clamp(18px, 3.8vw, 24px);
+            font-size: clamp(22px, 4.5vw, 30px);
             color: var(--header-text);
             margin: 0;
             transition: color 0.3s;
@@ -191,35 +196,44 @@
         .coins-display {
             background: var(--score-bg);
             color: var(--score-text);
-            padding: 1px 7px;
-            border-radius: 5px;
-            font-size: clamp(9px, 1.8vw, 12px);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: clamp(12px, 2.2vw, 15px);
             transition: background 0.3s;
+            min-height: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         .coins-display span {
             font-weight: bold;
-            font-size: clamp(10px, 2.2vw, 14px);
+            font-size: clamp(14px, 2.8vw, 18px);
             display: block;
             text-align: center;
         }
 
         .mode-selector {
             display: flex;
-            gap: 3px;
+            gap: 5px;
             justify-content: center;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
             flex-shrink: 0;
             flex-wrap: wrap;
         }
         .mode-btn {
-            padding: 2px 9px;
-            font-size: clamp(10px, 1.8vw, 13px);
+            padding: 4px 14px;
+            font-size: clamp(14px, 3vw, 18px);
             background: var(--shop-item-bg);
             border: 2px solid var(--shop-item-border);
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             transition: 0.2s;
             color: var(--text);
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .mode-btn.active {
             border-color: #27ae60;
@@ -229,34 +243,39 @@
 
         .scores {
             display: flex;
-            gap: 4px;
+            gap: 6px;
             align-items: center;
             flex-wrap: wrap;
             justify-content: center;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
             flex-shrink: 0;
         }
         .score-container {
             background: var(--score-bg);
             color: var(--score-text);
-            padding: 1px 7px;
-            border-radius: 5px;
-            font-size: clamp(8px, 1.6vw, 11px);
+            padding: 3px 14px;
+            border-radius: 6px;
+            font-size: clamp(11px, 2vw, 14px);
             transition: background 0.3s, color 0.3s;
-            min-width: 38px;
+            min-width: 55px;
+            min-height: 38px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         .score-container span {
             font-weight: bold;
-            font-size: clamp(10px, 2.2vw, 15px);
+            font-size: clamp(15px, 3.2vw, 20px);
             display: block;
             text-align: center;
         }
 
         .timer-display {
-            font-size: clamp(18px, 3.8vw, 26px);
+            font-size: clamp(20px, 4vw, 28px);
             font-weight: bold;
             color: var(--gameover-color);
-            margin: 1px 0;
+            margin: 2px 0;
             display: none;
             flex-shrink: 0;
         }
@@ -272,7 +291,7 @@
             box-shadow: 0 3px 12px rgba(0,0,0,0.08);
             flex-shrink: 0;
             width: 100%;
-            max-width: min(100%, 400px);
+            max-width: min(100%, 420px);
             margin: 0 auto;
         }
         .grid {
@@ -300,7 +319,7 @@
             align-items: center;
             font-weight: bold;
             color: #776e65;
-            font-size: clamp(16px, 4vw, 26px);
+            font-size: clamp(18px, 4.5vw, 28px);
             transition: top 0.08s ease, left 0.08s ease, transform 0.08s ease;
             z-index: 10;
             will-change: top, left, transform;
@@ -323,13 +342,13 @@
         .tile[data-value="16"] { background: #f59563; color: white; }
         .tile[data-value="32"] { background: #f67c5f; color: white; }
         .tile[data-value="64"] { background: #f65e3b; color: white; }
-        .tile[data-value="128"] { background: #edcf72; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile[data-value="256"] { background: #edcc61; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile[data-value="512"] { background: #edc850; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile[data-value="1024"] { background: #edc53f; color: white; font-size: clamp(11px, 2.6vw, 18px); }
-        .tile[data-value="2048"] { background: #edc22e; color: white; font-size: clamp(11px, 2.6vw, 18px); }
-        .tile[data-value="4096"] { background: #b884cb; color: white; font-size: clamp(9px, 2.4vw, 16px); }
-        .tile[data-value="8192"] { background: #a04eb3; color: white; font-size: clamp(9px, 2.4vw, 16px); }
+        .tile[data-value="128"] { background: #edcf72; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile[data-value="256"] { background: #edcc61; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile[data-value="512"] { background: #edc850; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile[data-value="1024"] { background: #edc53f; color: white; font-size: clamp(12px, 3vw, 18px); }
+        .tile[data-value="2048"] { background: #edc22e; color: white; font-size: clamp(12px, 3vw, 18px); }
+        .tile[data-value="4096"] { background: #b884cb; color: white; font-size: clamp(11px, 2.6vw, 16px); }
+        .tile[data-value="8192"] { background: #a04eb3; color: white; font-size: clamp(11px, 2.6vw, 16px); }
 
         .tile.green[data-value="2"] { background: #a8e6cf; color: #2d5a3a; }
         .tile.green[data-value="4"] { background: #7bcfb2; color: #1e3d2a; }
@@ -337,11 +356,11 @@
         .tile.green[data-value="16"] { background: #2e8b6c; color: white; }
         .tile.green[data-value="32"] { background: #1a6b52; color: white; }
         .tile.green[data-value="64"] { background: #0f4d3a; color: white; }
-        .tile.green[data-value="128"] { background: #0a3d2e; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.green[data-value="256"] { background: #063023; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.green[data-value="512"] { background: #042218; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.green[data-value="1024"] { background: #02150e; color: white; font-size: clamp(11px, 2.6vw, 18px); }
-        .tile.green[data-value="2048"] { background: #010d08; color: #ffd700; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile.green[data-value="128"] { background: #0a3d2e; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.green[data-value="256"] { background: #063023; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.green[data-value="512"] { background: #042218; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.green[data-value="1024"] { background: #02150e; color: white; font-size: clamp(12px, 3vw, 18px); }
+        .tile.green[data-value="2048"] { background: #010d08; color: #ffd700; font-size: clamp(12px, 3vw, 18px); }
 
         .tile.pink[data-value="2"] { background: #fce4ec; color: #6a2e4a; }
         .tile.pink[data-value="4"] { background: #f8bbd0; color: #5a1e3a; }
@@ -349,11 +368,11 @@
         .tile.pink[data-value="16"] { background: #ec407a; color: white; }
         .tile.pink[data-value="32"] { background: #d81b60; color: white; }
         .tile.pink[data-value="64"] { background: #ad1457; color: white; }
-        .tile.pink[data-value="128"] { background: #880e4f; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.pink[data-value="256"] { background: #6a0d3a; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.pink[data-value="512"] { background: #4a0828; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.pink[data-value="1024"] { background: #300519; color: white; font-size: clamp(11px, 2.6vw, 18px); }
-        .tile.pink[data-value="2048"] { background: #1a020e; color: #ffd700; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile.pink[data-value="128"] { background: #880e4f; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.pink[data-value="256"] { background: #6a0d3a; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.pink[data-value="512"] { background: #4a0828; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.pink[data-value="1024"] { background: #300519; color: white; font-size: clamp(12px, 3vw, 18px); }
+        .tile.pink[data-value="2048"] { background: #1a020e; color: #ffd700; font-size: clamp(12px, 3vw, 18px); }
 
         .tile.space[data-value="2"] { background: #b39ddb; color: #311b92; }
         .tile.space[data-value="4"] { background: #9575cd; color: #311b92; }
@@ -361,11 +380,11 @@
         .tile.space[data-value="16"] { background: #5e35b1; color: white; }
         .tile.space[data-value="32"] { background: #4527a0; color: white; }
         .tile.space[data-value="64"] { background: #311b92; color: white; }
-        .tile.space[data-value="128"] { background: #1a237e; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.space[data-value="256"] { background: #0d1440; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.space[data-value="512"] { background: #060a20; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.space[data-value="1024"] { background: #030510; color: white; font-size: clamp(11px, 2.6vw, 18px); }
-        .tile.space[data-value="2048"] { background: #010208; color: #ffd700; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile.space[data-value="128"] { background: #1a237e; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.space[data-value="256"] { background: #0d1440; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.space[data-value="512"] { background: #060a20; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.space[data-value="1024"] { background: #030510; color: white; font-size: clamp(12px, 3vw, 18px); }
+        .tile.space[data-value="2048"] { background: #010208; color: #ffd700; font-size: clamp(12px, 3vw, 18px); }
 
         .tile.ocean[data-value="2"] { background: #b3e5fc; color: #01579b; }
         .tile.ocean[data-value="4"] { background: #81d4fa; color: #01579b; }
@@ -373,11 +392,11 @@
         .tile.ocean[data-value="16"] { background: #26c6da; color: white; }
         .tile.ocean[data-value="32"] { background: #00bcd4; color: white; }
         .tile.ocean[data-value="64"] { background: #00838f; color: white; }
-        .tile.ocean[data-value="128"] { background: #006064; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.ocean[data-value="256"] { background: #004d40; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.ocean[data-value="512"] { background: #00332a; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.ocean[data-value="1024"] { background: #001f17; color: white; font-size: clamp(11px, 2.6vw, 18px); }
-        .tile.ocean[data-value="2048"] { background: #000f0b; color: #ffd700; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile.ocean[data-value="128"] { background: #006064; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.ocean[data-value="256"] { background: #004d40; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.ocean[data-value="512"] { background: #00332a; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.ocean[data-value="1024"] { background: #001f17; color: white; font-size: clamp(12px, 3vw, 18px); }
+        .tile.ocean[data-value="2048"] { background: #000f0b; color: #ffd700; font-size: clamp(12px, 3vw, 18px); }
 
         .tile.orange[data-value="2"] { background: #ffccbc; color: #bf360c; }
         .tile.orange[data-value="4"] { background: #ffab91; color: #bf360c; }
@@ -385,11 +404,11 @@
         .tile.orange[data-value="16"] { background: #ff7043; color: white; }
         .tile.orange[data-value="32"] { background: #ff5722; color: white; }
         .tile.orange[data-value="64"] { background: #e64a19; color: white; }
-        .tile.orange[data-value="128"] { background: #bf360c; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.orange[data-value="256"] { background: #8d2e00; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.orange[data-value="512"] { background: #5f1f00; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.orange[data-value="1024"] { background: #3d1400; color: white; font-size: clamp(11px, 2.6vw, 18px); }
-        .tile.orange[data-value="2048"] { background: #1f0a00; color: #ffd700; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile.orange[data-value="128"] { background: #bf360c; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.orange[data-value="256"] { background: #8d2e00; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.orange[data-value="512"] { background: #5f1f00; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.orange[data-value="1024"] { background: #3d1400; color: white; font-size: clamp(12px, 3vw, 18px); }
+        .tile.orange[data-value="2048"] { background: #1f0a00; color: #ffd700; font-size: clamp(12px, 3vw, 18px); }
 
         .tile.halloween[data-value="2"] { background: #ff8a65; color: #3e2723; }
         .tile.halloween[data-value="4"] { background: #ff6f00; color: #3e2723; }
@@ -397,11 +416,11 @@
         .tile.halloween[data-value="16"] { background: #bf360c; color: white; }
         .tile.halloween[data-value="32"] { background: #7f2d0a; color: white; }
         .tile.halloween[data-value="64"] { background: #4a148c; color: white; }
-        .tile.halloween[data-value="128"] { background: #311b92; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.halloween[data-value="256"] { background: #1a237e; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.halloween[data-value="512"] { background: #0d1440; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.halloween[data-value="1024"] { background: #060a20; color: white; font-size: clamp(11px, 2.6vw, 18px); }
-        .tile.halloween[data-value="2048"] { background: #010208; color: #ff6f00; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile.halloween[data-value="128"] { background: #311b92; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.halloween[data-value="256"] { background: #1a237e; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.halloween[data-value="512"] { background: #0d1440; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.halloween[data-value="1024"] { background: #060a20; color: white; font-size: clamp(12px, 3vw, 18px); }
+        .tile.halloween[data-value="2048"] { background: #010208; color: #ff6f00; font-size: clamp(12px, 3vw, 18px); }
 
         .tile.winter[data-value="2"] { background: #e3f2fd; color: #0d47a1; }
         .tile.winter[data-value="4"] { background: #bbdefb; color: #0d47a1; }
@@ -409,11 +428,11 @@
         .tile.winter[data-value="16"] { background: #64b5f6; color: white; }
         .tile.winter[data-value="32"] { background: #42a5f5; color: white; }
         .tile.winter[data-value="64"] { background: #1e88e5; color: white; }
-        .tile.winter[data-value="128"] { background: #1565c0; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.winter[data-value="256"] { background: #0d47a1; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.winter[data-value="512"] { background: #072a6e; color: white; font-size: clamp(13px, 3.2vw, 22px); }
-        .tile.winter[data-value="1024"] { background: #041a47; color: white; font-size: clamp(11px, 2.6vw, 18px); }
-        .tile.winter[data-value="2048"] { background: #020d24; color: #90caf9; font-size: clamp(11px, 2.6vw, 18px); }
+        .tile.winter[data-value="128"] { background: #1565c0; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.winter[data-value="256"] { background: #0d47a1; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.winter[data-value="512"] { background: #072a6e; color: white; font-size: clamp(15px, 3.5vw, 22px); }
+        .tile.winter[data-value="1024"] { background: #041a47; color: white; font-size: clamp(12px, 3vw, 18px); }
+        .tile.winter[data-value="2048"] { background: #020d24; color: #90caf9; font-size: clamp(12px, 3vw, 18px); }
 
         .grid-bg-default { background: #bbada0; }
         .grid-bg-dark { background: #16213e; }
@@ -432,14 +451,15 @@
         }
         .btn {
             padding: 6px 16px;
-            font-size: clamp(12px, 2.6vw, 15px);
+            font-size: clamp(14px, 3vw, 18px);
             background: var(--btn-bg);
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             transition: 0.2s;
-            min-height: 36px;
+            min-height: 38px;
+            min-width: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -447,15 +467,15 @@
         .btn:active { transform: scale(0.95); }
         .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
         .btn-hint { background: #6c5b7b; }
-        .btn-small { font-size: clamp(10px, 2vw, 12px); padding: 4px 12px; min-height: 32px; }
+        .btn-small { font-size: clamp(12px, 2.4vw, 15px); padding: 4px 12px; min-height: 34px; min-width: 38px; }
 
         .hint-area {
-            margin-top: 3px;
-            padding: 3px 7px;
+            margin-top: 4px;
+            padding: 4px 8px;
             background: var(--hint-bg);
             border-radius: 5px;
-            font-size: clamp(9px, 1.6vw, 12px);
-            min-height: 22px;
+            font-size: clamp(11px, 2vw, 14px);
+            min-height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -464,17 +484,17 @@
             opacity: 0.7;
             flex-shrink: 0;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             margin-left: auto;
             margin-right: auto;
             text-align: center;
             line-height: 1.3;
         }
-        .hint-area .hint-icon { margin-right: 3px; font-size: clamp(10px, 1.8vw, 13px); }
+        .hint-area .hint-icon { margin-right: 4px; font-size: clamp(12px, 2.2vw, 15px); }
 
         .game-over {
             margin-top: 3px;
-            font-size: clamp(15px, 2.8vw, 20px);
+            font-size: clamp(18px, 3.2vw, 24px);
             color: var(--gameover-color);
             font-weight: bold;
             display: none;
@@ -483,7 +503,7 @@
         }
         .controls-hint {
             margin-top: 1px;
-            font-size: clamp(7px, 1.2vw, 9px);
+            font-size: clamp(9px, 1.6vw, 12px);
             opacity: 0.4;
             flex-shrink: 0;
         }
@@ -493,7 +513,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: clamp(28px, 7vw, 44px);
+            font-size: clamp(32px, 8vw, 50px);
             font-weight: bold;
             color: #ffd700;
             text-shadow: 0 0 30px rgba(255,215,0,0.5);
@@ -533,15 +553,15 @@
 
         .toast {
             position: fixed;
-            top: 8px;
+            top: 10px;
             left: 50%;
             transform: translateX(-50%);
             background: #27ae60;
             color: white;
-            padding: 4px 12px;
+            padding: 6px 16px;
             border-radius: 6px;
             font-weight: bold;
-            font-size: clamp(10px, 2vw, 13px);
+            font-size: clamp(12px, 2.2vw, 15px);
             z-index: 2000;
             box-shadow: 0 3px 16px rgba(0,0,0,0.25);
             animation: fadePage 0.3s ease;
@@ -569,9 +589,9 @@
         .modal-box {
             background: var(--modal-content);
             color: var(--modal-text);
-            padding: 12px 16px;
+            padding: 16px 20px;
             border-radius: 10px;
-            max-width: 360px;
+            max-width: 380px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
@@ -580,14 +600,14 @@
         }
         .modal-box h2 {
             text-align: center;
-            margin-bottom: 8px;
-            font-size: clamp(16px, 3.5vw, 20px);
+            margin-bottom: 10px;
+            font-size: clamp(18px, 4vw, 24px);
         }
         .modal-close {
             display: block;
-            margin: 8px auto 0;
-            padding: 5px 16px;
-            font-size: clamp(10px, 2vw, 13px);
+            margin: 10px auto 0;
+            padding: 6px 20px;
+            font-size: clamp(12px, 2.2vw, 15px);
             background: var(--btn-bg);
             color: white;
             border: none;
@@ -599,15 +619,15 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 5px 8px;
+            padding: 6px 10px;
             border-bottom: 1px solid rgba(0,0,0,0.08);
-            font-size: clamp(12px, 2.5vw, 16px);
-            gap: 5px;
+            font-size: clamp(14px, 2.8vw, 18px);
+            gap: 6px;
         }
-        .leader-item .pos { font-weight: bold; width: 26px; text-align: center; font-size: clamp(12px, 2.5vw, 16px); }
+        .leader-item .pos { font-weight: bold; width: 30px; text-align: center; font-size: clamp(14px, 2.8vw, 18px); }
         .leader-item .name { flex: 1; text-align: left; font-weight: 500; }
-        .leader-item .lscore { font-weight: bold; font-size: clamp(11px, 2.2vw, 14px); color: var(--header-text); }
-        .leader-empty { text-align: center; opacity: 0.5; padding: 12px 0; font-size: clamp(10px, 2vw, 13px); }
+        .leader-item .lscore { font-weight: bold; font-size: clamp(13px, 2.5vw, 16px); color: var(--header-text); }
+        .leader-empty { text-align: center; opacity: 0.5; padding: 15px 0; font-size: clamp(12px, 2.2vw, 15px); }
 
         .tutorial-overlay {
             position: fixed;
@@ -622,66 +642,32 @@
         .tutorial-box {
             background: var(--modal-content);
             color: var(--modal-text);
-            padding: 16px 20px;
+            padding: 20px 24px;
             border-radius: 10px;
-            max-width: 340px;
+            max-width: 360px;
             width: 90%;
             text-align: center;
             transition: background 0.3s, color 0.3s;
         }
-        .tutorial-box h3 { font-size: clamp(16px, 3.5vw, 20px); margin-bottom: 6px; }
-        .tutorial-box p { font-size: clamp(12px, 2.2vw, 14px); opacity: 0.8; margin-bottom: 10px; line-height: 1.4; }
-        .tutorial-box .tutorial-progress { font-size: clamp(10px, 1.8vw, 12px); opacity: 0.5; margin-bottom: 6px; }
+        .tutorial-box h3 { font-size: clamp(18px, 4vw, 22px); margin-bottom: 8px; }
+        .tutorial-box p { font-size: clamp(13px, 2.5vw, 16px); opacity: 0.8; margin-bottom: 12px; line-height: 1.4; }
+        .tutorial-box .tutorial-progress { font-size: clamp(11px, 2vw, 14px); opacity: 0.5; margin-bottom: 8px; }
 
-        /* ===== СКРЫТЫЕ СТРАНИЦЫ (упрощённые) ===== */
+        /* ===== СКРЫТЫЕ СТРАНИЦЫ ===== */
         #pageShop, #pageAchievements, #pageStats, #pageSettings {
             display: none !important;
         }
 
-        /* ===== САМЫЕ МАЛЕНЬКИЕ ЭКРАНЫ ===== */
-        @media (max-height: 700px) {
-            .grid-wrapper { padding: 5px; max-width: min(100%, 360px); }
-            .grid { gap: 5px; }
-            .tile { font-size: clamp(13px, 3.2vw, 20px); }
-            .header { margin-bottom: 1px; }
-            .scores { margin-bottom: 1px; }
-            .controls-row { margin-top: 2px; }
-            .hint-area { min-height: 18px; padding: 1px 4px; font-size: clamp(8px, 1.4vw, 10px); }
-            .menu-title { font-size: clamp(30px, 6.5vw, 42px); }
-            .menu-btn { padding: 6px; font-size: clamp(11px, 2.2vw, 13px); }
-            .btn { padding: 5px 12px; font-size: clamp(11px, 2.2vw, 13px); min-height: 30px; }
-        }
-
-        @media (max-height: 600px) {
-            .grid-wrapper { padding: 4px; max-width: min(100%, 320px); }
-            .grid { gap: 4px; }
-            .tile { font-size: clamp(11px, 2.8vw, 16px) !important; }
-            .tile[data-value="128"],
-            .tile[data-value="256"],
-            .tile[data-value="512"] { font-size: clamp(10px, 2.4vw, 14px) !important; }
-            .tile[data-value="1024"],
-            .tile[data-value="2048"] { font-size: clamp(9px, 2vw, 12px) !important; }
-            .header { margin-bottom: 0px; }
-            .scores { margin-bottom: 0px; }
-            .score-container { padding: 0px 4px; font-size: clamp(7px, 1.2vw, 9px); }
-            .score-container span { font-size: clamp(9px, 1.8vw, 12px); }
-            .mode-btn { padding: 1px 6px; font-size: clamp(8px, 1.4vw, 10px); }
-            .btn { padding: 4px 10px; font-size: clamp(9px, 1.6vw, 11px); min-height: 26px; }
-            .hint-area { min-height: 16px; padding: 0px 3px; font-size: clamp(7px, 1.2vw, 9px); }
-            .game-over { font-size: clamp(12px, 2.2vw, 16px); }
-            .controls-hint { font-size: clamp(7px, 1vw, 8px); }
-            .menu-title { font-size: clamp(24px, 5.5vw, 32px); }
-            .menu-btn { padding: 4px; font-size: clamp(10px, 1.8vw, 11px); }
-            .coins-display { padding: 0px 4px; font-size: clamp(7px, 1.2vw, 9px); }
-            .coins-display span { font-size: clamp(8px, 1.4vw, 10px); }
-            .container { padding: 2px; }
-        }
-
-        /* ===== ТЕЛЕФОНЫ: Убираем лишнее пустое место сверху ===== */
-        @media (max-width: 500px) and (max-height: 900px) {
+        /* ===== ТЕЛЕФОНЫ: ВСЁ КРУПНЕЕ И БЕЗ ПУСТОТЫ ===== */
+        @media (max-width: 500px) {
+            .container {
+                padding: 4px 6px 2px 6px;
+                justify-content: flex-start;
+                padding-top: 6px;
+            }
             .game-wrapper {
-                padding: 0px 0;
-                justify-content: center;
+                justify-content: flex-start;
+                padding: 0;
             }
             .header {
                 margin-bottom: 1px;
@@ -694,100 +680,236 @@
             }
             .grid-wrapper {
                 padding: 5px;
-                max-width: min(100%, 380px);
+                max-width: min(100%, 400px);
             }
             .grid {
                 gap: 5px;
             }
             .controls-row {
-                margin-top: 2px;
+                margin-top: 3px;
                 gap: 4px;
             }
             .btn {
-                padding: 6px 14px;
-                font-size: clamp(12px, 2.8vw, 15px);
-                min-height: 34px;
+                padding: 8px 18px;
+                font-size: clamp(16px, 3.5vw, 20px);
+                min-height: 42px;
+                min-width: 48px;
                 border-radius: 8px;
             }
             .btn-small {
-                padding: 4px 10px;
-                font-size: clamp(10px, 2.2vw, 12px);
-                min-height: 30px;
+                padding: 6px 14px;
+                font-size: clamp(14px, 3vw, 17px);
+                min-height: 38px;
+                min-width: 42px;
             }
-            .hint-area {
-                margin-top: 2px;
-                padding: 2px 6px;
-                font-size: clamp(9px, 1.8vw, 11px);
-                min-height: 20px;
+            .mode-btn {
+                padding: 6px 16px;
+                font-size: clamp(16px, 3.5vw, 20px);
+                min-height: 38px;
             }
-            .game-over {
-                margin-top: 2px;
-                font-size: clamp(14px, 3vw, 18px);
+            .score-container {
+                padding: 4px 16px;
+                font-size: clamp(13px, 2.5vw, 16px);
+                min-height: 44px;
+                min-width: 60px;
             }
-            .controls-hint {
-                font-size: clamp(8px, 1.4vw, 10px);
-            }
-            .coins-display {
-                font-size: clamp(9px, 2vw, 11px);
-            }
-            .coins-display span {
-                font-size: clamp(10px, 2.2vw, 13px);
-            }
-            h1 {
+            .score-container span {
                 font-size: clamp(17px, 3.8vw, 22px);
             }
+            .coins-display {
+                padding: 4px 14px;
+                font-size: clamp(14px, 2.8vw, 17px);
+                min-height: 36px;
+            }
+            .coins-display span {
+                font-size: clamp(16px, 3.4vw, 20px);
+            }
             .back-btn {
-                font-size: clamp(12px, 2.8vw, 16px);
-                padding: 2px 6px;
+                padding: 4px 12px;
+                font-size: clamp(18px, 3.8vw, 24px);
+                min-height: 40px;
+                min-width: 48px;
             }
-        }
-
-        @media (max-width: 400px) and (max-height: 800px) {
-            .grid-wrapper {
-                padding: 4px;
-                max-width: min(100%, 340px);
+            h1 {
+                font-size: clamp(24px, 5vw, 32px);
             }
-            .grid {
-                gap: 4px;
+            .hint-area {
+                font-size: clamp(12px, 2.2vw, 15px);
+                min-height: 28px;
+                padding: 3px 8px;
+                margin-top: 3px;
+            }
+            .game-over {
+                font-size: clamp(18px, 3.5vw, 24px);
+            }
+            .controls-hint {
+                font-size: clamp(10px, 1.8vw, 13px);
             }
             .tile {
-                font-size: clamp(13px, 3vw, 18px) !important;
+                font-size: clamp(20px, 4.8vw, 30px) !important;
             }
             .tile[data-value="128"],
             .tile[data-value="256"],
             .tile[data-value="512"] {
-                font-size: clamp(11px, 2.5vw, 15px) !important;
+                font-size: clamp(16px, 3.8vw, 24px) !important;
             }
             .tile[data-value="1024"],
             .tile[data-value="2048"] {
-                font-size: clamp(10px, 2.2vw, 13px) !important;
+                font-size: clamp(14px, 3.2vw, 20px) !important;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .grid-wrapper {
+                padding: 4px;
+                max-width: min(100%, 360px);
+            }
+            .grid {
+                gap: 4px;
             }
             .btn {
-                padding: 5px 10px;
-                font-size: clamp(10px, 2.4vw, 13px);
-                min-height: 30px;
+                padding: 6px 14px;
+                font-size: clamp(14px, 3.2vw, 17px);
+                min-height: 36px;
+                min-width: 40px;
             }
             .btn-small {
-                padding: 3px 8px;
-                font-size: clamp(9px, 2vw, 11px);
-                min-height: 26px;
+                padding: 5px 10px;
+                font-size: clamp(12px, 2.6vw, 15px);
+                min-height: 32px;
+                min-width: 36px;
             }
-            .header {
-                margin-bottom: 0px;
-            }
-            .scores {
-                margin-bottom: 0px;
+            .mode-btn {
+                padding: 4px 12px;
+                font-size: clamp(14px, 3vw, 17px);
+                min-height: 32px;
             }
             .score-container {
-                padding: 0px 5px;
+                padding: 3px 12px;
+                font-size: clamp(11px, 2.2vw, 14px);
+                min-height: 38px;
+                min-width: 50px;
             }
             .score-container span {
-                font-size: clamp(9px, 2vw, 12px);
+                font-size: clamp(15px, 3.4vw, 19px);
+            }
+            .coins-display {
+                padding: 3px 10px;
+                font-size: clamp(12px, 2.4vw, 15px);
+                min-height: 30px;
+            }
+            .coins-display span {
+                font-size: clamp(14px, 3vw, 17px);
+            }
+            .back-btn {
+                padding: 3px 10px;
+                font-size: clamp(16px, 3.4vw, 20px);
+                min-height: 34px;
+                min-width: 40px;
+            }
+            h1 {
+                font-size: clamp(20px, 4.4vw, 26px);
+            }
+            .tile {
+                font-size: clamp(17px, 4.2vw, 24px) !important;
+            }
+            .tile[data-value="128"],
+            .tile[data-value="256"],
+            .tile[data-value="512"] {
+                font-size: clamp(14px, 3.4vw, 20px) !important;
+            }
+            .tile[data-value="1024"],
+            .tile[data-value="2048"] {
+                font-size: clamp(12px, 2.8vw, 16px) !important;
+            }
+        }
+
+        @media (max-height: 700px) {
+            .container {
+                padding: 4px 6px 2px 6px;
+                padding-top: 4px;
+            }
+            .grid-wrapper {
+                padding: 4px;
+                max-width: min(100%, 370px);
+            }
+            .grid {
+                gap: 4px;
+            }
+            .header {
+                margin-bottom: 1px;
+            }
+            .scores {
+                margin-bottom: 1px;
+            }
+            .mode-selector {
+                margin-bottom: 1px;
+            }
+            .controls-row {
+                margin-top: 2px;
+            }
+            .btn {
+                padding: 5px 12px;
+                font-size: clamp(13px, 2.6vw, 16px);
+                min-height: 34px;
+                min-width: 40px;
+            }
+            .btn-small {
+                padding: 4px 10px;
+                font-size: clamp(11px, 2.2vw, 14px);
+                min-height: 30px;
+                min-width: 34px;
+            }
+            .mode-btn {
+                padding: 4px 12px;
+                font-size: clamp(13px, 2.6vw, 16px);
+                min-height: 30px;
+            }
+            .score-container {
+                padding: 2px 12px;
+                font-size: clamp(10px, 2vw, 13px);
+                min-height: 36px;
+                min-width: 50px;
+            }
+            .score-container span {
+                font-size: clamp(14px, 3vw, 18px);
+            }
+            .coins-display {
+                padding: 2px 10px;
+                font-size: clamp(11px, 2.2vw, 14px);
+                min-height: 28px;
+            }
+            .coins-display span {
+                font-size: clamp(13px, 2.6vw, 16px);
             }
             .hint-area {
-                font-size: clamp(8px, 1.6vw, 10px);
-                min-height: 18px;
-                padding: 1px 4px;
+                font-size: clamp(10px, 1.8vw, 13px);
+                min-height: 22px;
+                padding: 2px 6px;
+            }
+            .back-btn {
+                padding: 3px 8px;
+                font-size: clamp(14px, 2.8vw, 18px);
+                min-height: 32px;
+                min-width: 36px;
+            }
+            h1 {
+                font-size: clamp(18px, 3.8vw, 24px);
+            }
+            .game-over {
+                font-size: clamp(16px, 3vw, 20px);
+            }
+            .tile {
+                font-size: clamp(16px, 3.8vw, 22px) !important;
+            }
+            .tile[data-value="128"],
+            .tile[data-value="256"],
+            .tile[data-value="512"] {
+                font-size: clamp(13px, 3vw, 18px) !important;
+            }
+            .tile[data-value="1024"],
+            .tile[data-value="2048"] {
+                font-size: clamp(11px, 2.6vw, 15px) !important;
             }
         }
     </style>
@@ -1897,7 +2019,7 @@
             setInterval(updateMenuBonusDisplay, 60000);
             if (!tutorialShown) setTimeout(startTutorial, 600);
 
-            console.log('2048 v3.3 — Mobile optimized, bigger buttons');
+            console.log('2048 v3.4 — Bigger UI, no empty space');
         })();
     </script>
 </body>
